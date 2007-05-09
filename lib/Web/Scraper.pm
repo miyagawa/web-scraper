@@ -44,11 +44,12 @@ sub scrape {
     my($html, $tree);
 
     if (blessed($stuff) && $stuff->isa('URI')) {
+        require Encode;
         require HTTP::Response::Encoding;
         my $ua  = __ua;
         my $res = $ua->get($stuff);
         if ($res->is_success) {
-            $html = $res->decoded_content;
+            $html = $res->encoding ? $res->decoded_content : Encode::decode_utf8($res->content);
         } else {
             croak "GET $stuff failed: ", $res->status_line;
         }
