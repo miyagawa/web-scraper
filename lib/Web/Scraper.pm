@@ -105,6 +105,7 @@ sub create_process {
         while (my($key, $val) = splice(@attr, 0, 2)) {
             if (ref($key) && ref($key) eq 'CODE' && !defined $val) {
                 for my $node (@nodes) {
+                    local $_ = $node;
                     $key->($node);
                 }
             } elsif ($key =~ s!\[\]$!!) {
@@ -122,6 +123,7 @@ sub __get_value {
     my($node, $val) = @_;
 
     if (ref($val) && ref($val) eq 'CODE') {
+        local $_ = $node;
         return $val->($node);
     } elsif (blessed($val) && $val->isa('Web::Scraper')) {
         return $val->scrape($node);

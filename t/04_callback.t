@@ -38,3 +38,17 @@ $node->attr('title')
 --- expected
 - baz 
 - bad
+
+===
+--- html
+<ul>
+<li class="foo"><span title="baz">bar1</span></li>
+<li class="foo"><span title="bad">bar3</span></li>
+</ul>
+--- selector
+li.foo span
+--- callback
+$_->attr('title')
+--- expected
+- baz 
+- bad
