@@ -1,5 +1,12 @@
 Revision history for Perl extension Web::Scraper
 
+0.04  Wed May  9 00:55:32 PDT 2007
+        - *API CHANGE* Now scraper {} returns Web::Scraper object and not closure.
+          You should call ->scrape() to get the response back.
+
+          I loved the code returning closure, but this is more compatible to
+          scrapi.rb API and hopefully less confusing to people.
+
 0.03  Tue May  8 23:04:13 PDT 2007
         - use 'TEXT' rather than 'content' to grab text from element
           to be more compatible with scrapi
