@@ -7,9 +7,9 @@ use Web::Scraper;
 
 my $ebay_auction = scraper {
     process "h3.ens>a",
-        description => 'content',
+        description => 'TEXT',
         url => '@href';
-    process "td.ebcPr>span", price => "content";
+    process "td.ebcPr>span", price => "TEXT";
     process "div.ebPicture >a>img", image => '@src';
     result 'description', 'url', 'price', 'image';
 };

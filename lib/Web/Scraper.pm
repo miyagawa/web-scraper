@@ -55,7 +55,7 @@ sub scraper(&) {
                 return $val->($node->as_HTML);
             } elsif ($val =~ s!^@!!) {
                 return $node->attr($val);
-            } elsif ($val eq 'content') {
+            } elsif (lc($val) eq 'content' || lc($val) eq 'text') {
                 return $node->as_text;
             } else {
                 Carp::cluck "WTF";
@@ -125,9 +125,9 @@ Web::Scraper - Web Scraping Toolkit inspired by Scrapi
 
   my $ebay_auction = scraper {
       process "h3.ens>a",
-          description => 'content',
+          description => 'TEXT',
           url => '@href';
-      process "td.ebcPr>span", price => "content";
+      process "td.ebcPr>span", price => "TEXT";
       process "div.ebPicture >a>img", image => '@src';
 
       result 'description', 'url', 'price', 'image';

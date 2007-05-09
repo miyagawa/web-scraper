@@ -1,13 +1,16 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
+use lib "lib";
+use URI;
+use Web::Scraper;
 
 # same as http://d.hatena.ne.jp/secondlife/20060922/1158923779
 
 my $keyword = scraper {
-    process 'span.title > a:first-child', title => 'content', url => '@href';
-    process 'span.furigana', furigana => 'content';
-    process 'ul.list-circle > li:first-child > a', category => 'content';
+    process 'span.title > a:first-child', title => 'TEXT', url => '@href';
+    process 'span.furigana', furigana => 'TEXT';
+    process 'ul.list-circle > li:first-child > a', category => 'TEXT';
 };
 
 my $res = $keyword->(URI->new("http://d.hatena.ne.jp/keyword/%BA%B0%CC%EE%A4%A2%A4%B5%C8%FE"));
