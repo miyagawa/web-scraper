@@ -31,37 +31,32 @@ sub scraper(&) {
 
     sub {
         my $stuff = shift;
+        my($html, $tree);
 
         if (blessed($stuff) && $stuff->isa('URI')) {
             require HTTP::Response::Encoding;
             my $ua  = __ua;
             my $res = $ua->get($stuff);
             if ($res->is_success) {
-                $stuff = $res->decoded_content;
+                $html = $res->decoded_content;
             } else {
                 croak "GET $stuff failed: ", $res->status_line;
             }
+        } elsif (blessed($stuff) && $stuff->isa('HTML::Element')) {
+            $tree = $stuff->clone;
+        } elsif (ref($stuff) && ref($stuff) eq 'SCALAR') {
+            $html = $$stuff;
+        } else {
+            $html = $stuff;
         }
 
-        my $tree = HTML::TreeBuilder::XPath->new;
-        $tree->parse($stuff);
-
-        my $stash;
-
-        my $get_value = sub {
-            my($node, $val) = @_;
-
-            if (ref($val) && ref($val) eq 'CODE') {
-                return $val->($node->as_HTML);
-            } elsif ($val =~ s!^@!!) {
-                return $node->attr($val);
-            } elsif (lc($val) eq 'content' || lc($val) eq 'text') {
-                return $node->as_text;
-            } else {
-                Carp::cluck "WTF";
-            }
+        $tree ||= do {
+            my $t = HTML::TreeBuilder::XPath->new;
+            $t->parse($html);
+            $t;
         };
 
+        my $stash;
         no warnings 'redefine';
         local *process = sub {
             my($exp, @attr) = @_;
@@ -71,9 +66,9 @@ sub scraper(&) {
 
             while (my($key, $val) = splice(@attr, 0, 2)) {
                 if ($key =~ s!\[\]$!!) {
-                    $stash->{$key} = [ map $get_value->($_, $val), @nodes ];
+                    $stash->{$key} = [ map get_value($_, $val), @nodes ];
                 } else {
-                    $stash->{$key} = $get_value->($nodes[0], $val);
+                    $stash->{$key} = get_value($nodes[0], $val);
                 }
             }
 
@@ -100,6 +95,21 @@ sub scraper(&) {
         return $stash;
     };
 }
+
+sub get_value {
+    my($node, $val) = @_;
+
+    if (ref($val) && ref($val) eq 'CODE') {
+        return $val->($node);
+    } elsif ($val =~ s!^@!!) {
+        return $node->attr($val);
+    } elsif (lc($val) eq 'content' || lc($val) eq 'text') {
+        return $node->as_text;
+    } else {
+        Carp::cluck "WTF";
+    }
+}
+
 
 sub process {
     croak "Can't call process() outside scraper block";
