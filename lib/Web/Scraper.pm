@@ -14,8 +14,9 @@ sub import {
 
     no strict 'refs';
     *{"$pkg\::scraper"} = \&scraper;
-    *{"$pkg\::process"} = sub { goto &process };
-    *{"$pkg\::result"}  = sub { goto &result  };
+    *{"$pkg\::process"}       = sub { goto &process };
+    *{"$pkg\::process_first"} = sub { goto &process_first };
+    *{"$pkg\::result"}        = sub { goto &result  };
 }
 
 my $ua;
@@ -56,24 +57,10 @@ sub scraper(&) {
             $t;
         };
 
-        my $stash;
+        my $stash = {};
         no warnings 'redefine';
-        local *process = sub {
-            my($exp, @attr) = @_;
-
-            my $xpath = HTML::Selector::XPath::selector_to_xpath($exp);
-            my @nodes = $tree->findnodes($xpath) or return;
-
-            while (my($key, $val) = splice(@attr, 0, 2)) {
-                if ($key =~ s!\[\]$!!) {
-                    $stash->{$key} = [ map get_value($_, $val), @nodes ];
-                } else {
-                    $stash->{$key} = get_value($nodes[0], $val);
-                }
-            }
-
-            return;
-        };
+        local *process       = create_process(0, $tree, $stash);
+        local *process_first = create_process(1, $tree, $stash);
 
         local *result = sub {
             my @keys = @_;
@@ -96,6 +83,32 @@ sub scraper(&) {
     };
 }
 
+sub create_process {
+    my($first, $tree, $stash) = @_;
+
+    sub {
+        my($exp, @attr) = @_;
+
+        my $xpath = HTML::Selector::XPath::selector_to_xpath($exp);
+        my @nodes = $tree->findnodes($xpath) or return;
+        @nodes = ($nodes[0]) if $first;
+
+        while (my($key, $val) = splice(@attr, 0, 2)) {
+            if (ref($key) && ref($key) eq 'CODE' && !defined $val) {
+                for my $node (@nodes) {
+                    $key->($node);
+                }
+            } elsif ($key =~ s!\[\]$!!) {
+                $stash->{$key} = [ map get_value($_, $val), @nodes ];
+            } else {
+                $stash->{$key} = get_value($nodes[0], $val);
+            }
+        }
+
+        return;
+    };
+}
+
 sub get_value {
     my($node, $val) = @_;
 
@@ -110,14 +123,16 @@ sub get_value {
     }
 }
 
-
-sub process {
-    croak "Can't call process() outside scraper block";
+sub stub {
+    my $func = shift;
+    return sub {
+        croak "Can't call $func() outside scraper block";
+    };
 }
 
-sub result {
-    croak "Can't call result() outside scraper block";
-}
+*process       = stub 'process';
+*process_first = stub 'process_first';
+*result        = stub 'result';
 
 1;
 __END__
