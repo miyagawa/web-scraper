@@ -25,4 +25,9 @@ MANIFEST			This list of files
 META.yml
 README
 t/00_compile.t
+t/01_process.t
+t/02_process_multi.t
+t/03_scraper_nest.t
+t/04_callback.t
+t/05_process_first.t
 t/perlcriticrc
