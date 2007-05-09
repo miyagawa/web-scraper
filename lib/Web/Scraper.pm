@@ -27,6 +27,11 @@ sub __ua {
     $ua;
 }
 
+sub define {
+    my($class, $coderef) = @_;
+    bless { code => $coderef }, $class;
+}
+
 sub scraper(&) {
     my($coderef) = @_;
     bless { code => $coderef }, __PACKAGE__;
