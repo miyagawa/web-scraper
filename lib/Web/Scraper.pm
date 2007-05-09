@@ -29,58 +29,61 @@ sub __ua {
 
 sub scraper(&) {
     my($coderef) = @_;
+    bless { code => $coderef }, __PACKAGE__;
+}
 
-    sub {
-        my $stuff = shift;
-        my($html, $tree);
+sub scrape {
+    my $self  = shift;
+    my($stuff) = @_;
 
-        if (blessed($stuff) && $stuff->isa('URI')) {
-            require HTTP::Response::Encoding;
-            my $ua  = __ua;
-            my $res = $ua->get($stuff);
-            if ($res->is_success) {
-                $html = $res->decoded_content;
-            } else {
-                croak "GET $stuff failed: ", $res->status_line;
-            }
-        } elsif (blessed($stuff) && $stuff->isa('HTML::Element')) {
-            $tree = $stuff->clone;
-        } elsif (ref($stuff) && ref($stuff) eq 'SCALAR') {
-            $html = $$stuff;
+    my($html, $tree);
+
+    if (blessed($stuff) && $stuff->isa('URI')) {
+        require HTTP::Response::Encoding;
+        my $ua  = __ua;
+        my $res = $ua->get($stuff);
+        if ($res->is_success) {
+            $html = $res->decoded_content;
         } else {
-            $html = $stuff;
+            croak "GET $stuff failed: ", $res->status_line;
         }
+    } elsif (blessed($stuff) && $stuff->isa('HTML::Element')) {
+        $tree = $stuff->clone;
+    } elsif (ref($stuff) && ref($stuff) eq 'SCALAR') {
+        $html = $$stuff;
+    } else {
+        $html = $stuff;
+    }
 
-        $tree ||= do {
-            my $t = HTML::TreeBuilder::XPath->new;
-            $t->parse($html);
-            $t;
-        };
-
-        my $stash = {};
-        no warnings 'redefine';
-        local *process       = create_process(0, $tree, $stash);
-        local *process_first = create_process(1, $tree, $stash);
-
-        local *result = sub {
-            my @keys = @_;
-
-            if (@keys == 1) {
-                return $stash->{$keys[0]};
-            } else {
-                my %res;
-                @res{@keys} = @{$stash}{@keys};
-                return \%res;
-            }
-        };
-
-        my $ret = $coderef->($tree);
-
-        # check user specified return value
-        return $ret if $ret;
-
-        return $stash;
+    $tree ||= do {
+        my $t = HTML::TreeBuilder::XPath->new;
+        $t->parse($html);
+        $t;
     };
+
+    my $stash = {};
+    no warnings 'redefine';
+    local *process       = create_process(0, $tree, $stash);
+    local *process_first = create_process(1, $tree, $stash);
+
+    local *result = sub {
+        my @keys = @_;
+
+        if (@keys == 1) {
+            return $stash->{$keys[0]};
+        } else {
+            my %res;
+            @res{@keys} = @{$stash}{@keys};
+            return \%res;
+        }
+    };
+
+    my $ret = $self->{code}->($tree);
+
+    # check user specified return value
+    return $ret if $ret;
+
+    return $stash;
 }
 
 sub create_process {
@@ -99,9 +102,9 @@ sub create_process {
                     $key->($node);
                 }
             } elsif ($key =~ s!\[\]$!!) {
-                $stash->{$key} = [ map get_value($_, $val), @nodes ];
+                $stash->{$key} = [ map __get_value($_, $val), @nodes ];
             } else {
-                $stash->{$key} = get_value($nodes[0], $val);
+                $stash->{$key} = __get_value($nodes[0], $val);
             }
         }
 
@@ -109,30 +112,32 @@ sub create_process {
     };
 }
 
-sub get_value {
+sub __get_value {
     my($node, $val) = @_;
 
     if (ref($val) && ref($val) eq 'CODE') {
         return $val->($node);
+    } elsif (blessed($val) && $val->isa('Web::Scraper')) {
+        return $val->scrape($node);
     } elsif ($val =~ s!^@!!) {
         return $node->attr($val);
     } elsif (lc($val) eq 'content' || lc($val) eq 'text') {
         return $node->as_text;
     } else {
-        Carp::cluck "WTF";
+        Carp::croak "Unknown value type $val";
     }
 }
 
-sub stub {
+sub __stub {
     my $func = shift;
     return sub {
         croak "Can't call $func() outside scraper block";
     };
 }
 
-*process       = stub 'process';
-*process_first = stub 'process_first';
-*result        = stub 'result';
+*process       = __stub 'process';
+*process_first = __stub 'process_first';
+*result        = __stub 'result';
 
 1;
 __END__
@@ -164,7 +169,7 @@ Web::Scraper - Web Scraping Toolkit inspired by Scrapi
       result 'auctions';
   };
 
-  $ebay->( URI->new("http://search.ebay.com/apple-ipod-nano_W0QQssPageNameZWLRS") );
+  $ebay->scrape( URI->new("http://search.ebay.com/apple-ipod-nano_W0QQssPageNameZWLRS") );
 
 =head1 DESCRIPTION
 

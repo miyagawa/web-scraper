@@ -17,7 +17,7 @@ my $twitter = scraper {
     result 'friends';
 };
 
-my $friends = $twitter->($uri);
+my $friends = $twitter->scrape($uri);
 
 use YAML;
 warn Dump $friends;

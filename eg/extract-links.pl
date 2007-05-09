@@ -12,7 +12,7 @@ my $scraper = scraper {
     result 'urls';
 };
 
-my $links = $scraper->(URI->new($uri));
+my $links = $scraper->scrape(URI->new($uri));
 use YAML;
 warn Dump $links;
 

@@ -16,7 +16,7 @@ run {
         process $block->selector, 'text[]' => 'TEXT';
         result 'text';
     };
-    my $texts = $s->($block->html);
+    my $texts = $s->scrape($block->html);
     is_deeply $texts, $block->expected, $block->name;
 };
 

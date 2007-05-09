@@ -19,7 +19,7 @@ run {
         result 'friends';
     };
 
-    my $res = $s->($block->html);
+    my $res = $s->scrape($block->html);
     is_deeply $res, $block->expected, $block->name;
 };
 

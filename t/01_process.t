@@ -16,7 +16,7 @@ run {
         process $block->selector, text => 'TEXT';
         result 'text';
     };
-    my $text = $s->($block->html);
+    my $text = $s->scrape($block->html);
     is $text, $block->expected, $block->name;
 };
 

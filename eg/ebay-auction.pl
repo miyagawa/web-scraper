@@ -20,7 +20,7 @@ my $ebay = scraper {
     result 'auctions';
 };
 
-my $auctions = $ebay->( URI->new("http://search.ebay.com/apple-ipod-nano_W0QQssPageNameZWLRS") );
+my $auctions = $ebay->scrape( URI->new("http://search.ebay.com/apple-ipod-nano_W0QQssPageNameZWLRS") );
 
 use YAML;
 warn Dump $auctions;

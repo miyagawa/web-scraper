@@ -19,7 +19,7 @@ run {
             fail $@ if $@;
         };
     };
-    $s->($block->html);
+    $s->scrape($block->html);
     is_deeply \@value, $block->expected, $block->name;
 };
 
