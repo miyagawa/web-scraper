@@ -1,4 +1,7 @@
 Revision history for Perl extension Web::Scraper
 
+0.02  Tue May  8 20:03:37 PDT 2007
+        - Added dependencies to Makefile.PL
+
 0.01  Tue May  8 04:05:59 2007
         - original version
