@@ -49,7 +49,7 @@ sub scrape {
         my $ua  = __ua;
         my $res = $ua->get($stuff);
         if ($res->is_success) {
-            $html = $res->encoding ? $res->decoded_content : Encode::decode_utf8($res->content);
+            $html = $res->encoding ? $res->decoded_content : Encode::decode("latin-1", $res->content);
         } else {
             croak "GET $stuff failed: ", $res->status_line;
         }
