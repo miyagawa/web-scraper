@@ -1,4 +1,5 @@
 Changes
+eg/dave-trailer-HD.pl
 eg/ebay-auction.pl
 eg/extract-links.pl
 eg/hatena-keyword.pl
@@ -30,4 +31,5 @@ t/02_process_multi.t
 t/03_scraper_nest.t
 t/04_callback.t
 t/05_process_first.t
+t/06_define.t
 t/perlcriticrc

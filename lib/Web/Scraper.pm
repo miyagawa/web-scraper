@@ -6,7 +6,7 @@ use Scalar::Util 'blessed';
 use HTML::TreeBuilder::XPath;
 use HTML::Selector::XPath;
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 sub import {
     my $class = shift;
