@@ -98,7 +98,7 @@ sub create_process {
     sub {
         my($exp, @attr) = @_;
 
-        my $xpath = HTML::Selector::XPath::selector_to_xpath($exp);
+        my $xpath = $exp =~ m!^/! ? $exp : HTML::Selector::XPath::selector_to_xpath($exp);
         my @nodes = $tree->findnodes($xpath) or return;
         @nodes = ($nodes[0]) if $first;
 

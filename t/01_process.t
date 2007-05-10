@@ -4,7 +4,6 @@ use Test::Base;
 use Web::Scraper;
 plan tests => 1 * blocks;
 
-
 filters {
     selector => 'chomp',
     expected => 'chomp',
@@ -35,5 +34,13 @@ bar
 <span><a href="foo">baz</a></span>
 --- selector
 span a[href]
+--- expected
+baz
+
+===
+--- html
+<span><a href="foo">baz</a></span>
+--- selector
+//span/a
 --- expected
 baz
