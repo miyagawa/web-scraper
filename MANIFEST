@@ -32,4 +32,5 @@ t/03_scraper_nest.t
 t/04_callback.t
 t/05_process_first.t
 t/06_define.t
+t/07-live.t
 t/perlcriticrc
