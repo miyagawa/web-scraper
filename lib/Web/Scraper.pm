@@ -86,6 +86,7 @@ sub scrape {
     };
 
     my $ret = $self->{code}->($tree);
+    $tree->delete;
 
     # check user specified return value
     return $ret if $ret;
