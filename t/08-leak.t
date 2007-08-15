@@ -12,8 +12,6 @@ filters {
     expected => 'chomp',
 };
 
-use Devel::Leak;
-
 run {
     my $block = shift;
 

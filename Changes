@@ -1,5 +1,8 @@
 Revision history for Perl extension Web::Scraper
 
+0.09  Wed Aug 15 10:51:14 PDT 2007
+        - remove Devel::Leak use from tests
+
 0.08  Tue Aug 14 13:25:16 PDT 2007
         - Call $tree->delete after the callback to avoid memory leaks by TreeBuilder.
           (Thanks to k.daiba for the report)
