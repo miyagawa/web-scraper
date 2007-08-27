@@ -1,3 +1,4 @@
+bin/scraper
 Changes
 eg/dave-trailer-HD.pl
 eg/ebay-auction.pl
@@ -11,6 +12,7 @@ inc/Module/Install/Fetch.pm
 inc/Module/Install/Include.pm
 inc/Module/Install/Makefile.pm
 inc/Module/Install/Metadata.pm
+inc/Module/Install/Scripts.pm
 inc/Module/Install/TestBase.pm
 inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm

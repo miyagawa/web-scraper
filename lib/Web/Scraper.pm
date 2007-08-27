@@ -6,7 +6,7 @@ use Scalar::Util 'blessed';
 use HTML::TreeBuilder::XPath;
 use HTML::Selector::XPath;
 
-our $VERSION = '0.09';
+our $VERSION = '0.10';
 
 sub import {
     my $class = shift;
@@ -78,10 +78,12 @@ sub scrape {
 
         if (@keys == 1) {
             return $stash->{$keys[0]};
-        } else {
+        } elsif (@keys) {
             my %res;
             @res{@keys} = @{$stash}{@keys};
             return \%res;
+        } else {
+            return $stash;
         }
     };
 

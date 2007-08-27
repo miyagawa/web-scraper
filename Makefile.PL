@@ -10,6 +10,8 @@ requires 'LWP::UserAgent';
 requires 'HTTP::Response::Encoding';
 
 build_requires 'Test::More';
+install_script 'bin/scraper';
+
 use_test_base;
 auto_include;
 WriteAll;

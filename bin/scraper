@@ -1,0 +1,48 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+
+use Term::ReadLine;
+use Data::Dumper;
+use URI;
+use Web::Scraper;
+use YAML;
+
+my $stuff   = process_args($ARGV[0])
+    or die "Usage: scraper [URI-or-filename]\n";
+
+my $term    = Term::ReadLine->new();
+my $scraper = scraper { run_loop($term) };
+my $result  = $scraper->scrape($stuff);
+
+sub process_args {
+    my $uri = shift;
+
+    if (!-t STDIN and my $content = join "", <STDIN>) {
+        return \$content;
+    } elsif ($uri && $uri =~ m!^https?://!) {
+        return URI->new($uri);
+    } elsif ($uri && -e $uri) {
+        open my $fh, "<", $uri or die "$uri: $!";
+        return join "", <$fh>;
+    }
+
+    return;
+}
+
+sub run_loop {
+    my $term = shift;
+    while (defined(my $in = $term->readline("scraper> "))) {
+        if ($in eq 'd') {
+            $Data::Dumper::Indent = 1;
+            warn Dumper result;
+        } elsif ($in eq 'y') {
+            warn Dump result;
+        } elsif ($in eq 'q') {
+            return;
+        } else {
+            my $res = eval $in;
+            warn $@ if $@;
+        }
+    }
+}

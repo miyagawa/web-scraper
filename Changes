@@ -1,5 +1,9 @@
 Revision history for Perl extension Web::Scraper
 
+0.10  Mon Aug 27 00:53:51 PDT 2007
+        - result now returns the entire stash if called without keys
+        - added bin/scraper CLI
+
 0.09  Wed Aug 15 10:51:14 PDT 2007
         - remove Devel::Leak use from tests
 
