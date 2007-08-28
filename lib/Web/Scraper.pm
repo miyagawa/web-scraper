@@ -6,7 +6,7 @@ use Scalar::Util 'blessed';
 use HTML::TreeBuilder::XPath;
 use HTML::Selector::XPath;
 
-our $VERSION = '0.10';
+our $VERSION = '0.11';
 
 sub import {
     my $class = shift;
@@ -135,6 +135,12 @@ sub __get_value {
         return $node->attr($val);
     } elsif (lc($val) eq 'content' || lc($val) eq 'text') {
         return $node->as_text;
+    } elsif (ref($val) eq 'HASH') {
+        my $values;
+        for my $key (keys %$val) {
+            $values->{$key} = __get_value($node, $val->{$key});
+        }
+        return $values;
     } else {
         Carp::croak "Unknown value type $val";
     }

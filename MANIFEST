@@ -36,4 +36,5 @@ t/05_process_first.t
 t/06_define.t
 t/07-live.t
 t/08-leak.t
+t/09-process_hash.t
 t/perlcriticrc

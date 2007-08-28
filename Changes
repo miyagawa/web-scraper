@@ -1,5 +1,10 @@
 Revision history for Perl extension Web::Scraper
 
+0.11  Tue Aug 28 02:50:01 PDT 2007
+        - Supported hash-reference in process values, like
+          process "a", "people[]", { link => '@href', name => 'TEXT' };
+          See t/09-process_hash.t for its usage.
+
 0.10  Mon Aug 27 00:53:51 PDT 2007
         - result now returns the entire stash if called without keys
         - added bin/scraper CLI
