@@ -37,4 +37,5 @@ t/06_define.t
 t/07-live.t
 t/08-leak.t
 t/09-process_hash.t
+t/10_invalid_xpath.t
 t/perlcriticrc

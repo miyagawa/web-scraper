@@ -1,5 +1,11 @@
 Revision history for Perl extension Web::Scraper
 
+0.12  Thu Aug 30 02:39:44 PDT 2007
+        - Added 's' command to scraper to get the HTML source
+        - You can use $tree variable to deal with the HTML::Element object in scraper shell
+        - Give a graceful error message if the given Selector/XPath doesn't compile
+        - Give a better error when number of args in process() seems wrong
+
 0.11  Tue Aug 28 02:50:01 PDT 2007
         - Supported hash-reference in process values, like
           process "a", "people[]", { link => '@href', name => 'TEXT' };

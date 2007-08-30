@@ -6,7 +6,7 @@ use Scalar::Util 'blessed';
 use HTML::TreeBuilder::XPath;
 use HTML::Selector::XPath;
 
-our $VERSION = '0.11';
+our $VERSION = '0.12';
 
 sub import {
     my $class = shift;
@@ -103,14 +103,27 @@ sub create_process {
         my($exp, @attr) = @_;
 
         my $xpath = $exp =~ m!^/! ? $exp : HTML::Selector::XPath::selector_to_xpath($exp);
-        my @nodes = $tree->findnodes($xpath) or return;
+        my @nodes = eval {
+            local $SIG{__WARN__} = sub { };
+            $tree->findnodes($xpath);
+        };
+
+        if ($@) {
+            die "'$xpath' doesn't look like a valid XPath expression: $@";
+        }
+
+        @nodes or return;
         @nodes = ($nodes[0]) if $first;
 
         while (my($key, $val) = splice(@attr, 0, 2)) {
-            if (ref($key) && ref($key) eq 'CODE' && !defined $val) {
-                for my $node (@nodes) {
-                    local $_ = $node;
-                    $key->($node);
+            if (!defined $val) {
+                if (ref($key) && ref($key) eq 'CODE') {
+                    for my $node (@nodes) {
+                        local $_ = $node;
+                        $key->($node);
+                    }
+                } else {
+                    die "Don't know what to do with $key => undef";
                 }
             } elsif ($key =~ s!\[\]$!!) {
                 $stash->{$key} = [ map __get_value($_, $val), @nodes ];

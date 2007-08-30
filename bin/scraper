@@ -12,7 +12,7 @@ my $stuff   = process_args($ARGV[0])
     or die "Usage: scraper [URI-or-filename]\n";
 
 my $term    = Term::ReadLine->new();
-my $scraper = scraper { run_loop($term) };
+my $scraper = scraper { run_loop($_[0], $term) };
 my $result  = $scraper->scrape($stuff);
 
 sub process_args {
@@ -31,13 +31,15 @@ sub process_args {
 }
 
 sub run_loop {
-    my $term = shift;
+    my($tree, $term) = @_;
     while (defined(my $in = $term->readline("scraper> "))) {
         if ($in eq 'd') {
             $Data::Dumper::Indent = 1;
             warn Dumper result;
         } elsif ($in eq 'y') {
             warn Dump result;
+        } elsif ($in eq 's') {
+            warn $tree->as_HTML(undef, "  ");
         } elsif ($in eq 'q') {
             return;
         } else {
