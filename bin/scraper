@@ -9,6 +9,8 @@ use URI;
 use Web::Scraper;
 use YAML;
 
+sub WARN() { return sub { warn $_->as_HTML } }
+
 my(@stack, $source);
 
 my $stuff   = process_args($ARGV[0])
