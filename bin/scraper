@@ -2,11 +2,14 @@
 use strict;
 use warnings;
 
+use Config;
 use Term::ReadLine;
 use Data::Dumper;
 use URI;
 use Web::Scraper;
 use YAML;
+
+my(@stack, $source);
 
 my $stuff   = process_args($ARGV[0])
     or die "Usage: scraper [URI-or-filename]\n";
@@ -19,10 +22,13 @@ sub process_args {
     my $uri = shift;
 
     if (!-t STDIN and my $content = join "", <STDIN>) {
+        $source = [ 'stdin' ];
         return \$content;
     } elsif ($uri && $uri =~ m!^https?://!) {
+        $source = [ "URI", $uri ];
         return URI->new($uri);
     } elsif ($uri && -e $uri) {
+        $source = [ 'file', $uri ];
         open my $fh, "<", $uri or die "$uri: $!";
         return join "", <$fh>;
     }
@@ -42,9 +48,39 @@ sub run_loop {
             warn $tree->as_HTML(undef, "  ");
         } elsif ($in eq 'q') {
             return;
+        } elsif ($in eq 'c') {
+            print generate_code($source, $stack[-1]);
+        } elsif ($in =~ /^c\s+all\s*$/) {
+            print generate_code($source, @stack);
         } else {
             my $res = eval $in;
             warn $@ if $@;
+            push @stack, $in unless $@;
         }
     }
+}
+
+sub generate_code {
+    my($source, @stack) = @_;
+
+    my $code_stack = join "\n", map { "    $_" . (/;$/ ? "" : ";") } @stack;
+    my $stuff =
+        $source->[0] eq 'stdin'         ? '\join "", <STDIN>' :
+        $source->[0] eq 'URI'           ? qq(URI->new("$source->[1]")) :
+        $source->[0] eq 'file'          ? qq(\\do { my \$file = "$source->[1]"; open my \$fh, \$file or die "\$file: \$!"; join '', <\$fh> }) :
+                                          '...';
+
+    return <<CODE;
+#!$Config{perlpath}
+use strict;
+use Web::Scraper;
+use URI;
+
+my \$stuff   = $stuff;
+my \$scraper = scraper {
+$code_stack
+};
+my \$result = \$scraper->scrape(\$stuff);
+CODE
+
 }
