@@ -1,10 +1,11 @@
 Revision history for Perl extension Web::Scraper
 
-0.13
+0.13  Sun Sep  2 17:11:08 PDT 2007
         - Added 'c' and 'c all' command to scraper to generate the
           code to replay the session
         - Added 'WARN' as a shortcut to sub { warn $_->as_HTML } on scraper shell like:
             process "a", WARN; # print 'a' elements as HTML
+        - Added 'search-cpan.pl' and 'rel-tag.pl' to eg/
 
 0.12  Thu Aug 30 02:39:44 PDT 2007
         - Added 's' command to scraper to get the HTML source
