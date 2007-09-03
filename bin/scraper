@@ -16,7 +16,7 @@ my(@stack, $source);
 my $stuff   = process_args($ARGV[0])
     or die "Usage: scraper [URI-or-filename]\n";
 
-my $term    = Term::ReadLine->new();
+my $term    = Term::ReadLine->new("Web::Scraper");
 my $scraper = scraper { run_loop($_[0], $term) };
 my $result  = $scraper->scrape($stuff);
 
