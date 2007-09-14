@@ -47,7 +47,7 @@ sub run_loop {
         } elsif ($in eq 'y') {
             warn Dump result;
         } elsif ($in eq 's') {
-            warn $tree->as_HTML(undef, "  ");
+            warn $tree->as_HTML(undef, "  ", {});
         } elsif ($in eq 'q') {
             return;
         } elsif ($in eq 'c') {
