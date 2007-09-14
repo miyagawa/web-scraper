@@ -1,6 +1,6 @@
 Revision history for Perl extension Web::Scraper
 
-0.14
+0.14  Fri Sep 14 16:06:20 PDT 2007
         - Fix bin/scraper to work with older Term::ReadLine.
           (Thanks to Tina Müller [RT:29079])
         - Now link elements like img@src and a@href are automatically
