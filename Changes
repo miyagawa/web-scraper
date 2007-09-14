@@ -1,5 +1,16 @@
 Revision history for Perl extension Web::Scraper
 
+0.14
+        - Fix bin/scraper to work with older Term::ReadLine.
+          (Thanks to Tina Müller [RT:29079])
+        - Now link elements like img@src and a@href are automatically
+          converted to absolute URI using the current URI as a base.
+          Only effective when you do $s->scrape(URI) or $s->scrape(\$html, URI)
+        - Added 'HTML' and its alias 'RAW' to get the HTML chunk inside the tag
+            process "script", "code" => 'RAW';
+          Handy if you want the raw HTML code inside <script> or <style>.
+          (Thanks to charsbar for the suggestion)
+
 0.13  Sun Sep  2 17:11:08 PDT 2007
         - Added 'c' and 'c all' command to scraper to generate the
           code to replay the session

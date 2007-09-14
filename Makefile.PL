@@ -8,6 +8,7 @@ requires 'XML::XPathEngine', 0.08;
 requires 'HTML::Selector::XPath';
 requires 'LWP::UserAgent';
 requires 'HTTP::Response::Encoding';
+requires 'HTML::Tagset';
 requires 'URI';
 requires 'YAML';
 

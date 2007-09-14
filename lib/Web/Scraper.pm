@@ -3,6 +3,7 @@ use strict;
 use warnings;
 use Carp;
 use Scalar::Util 'blessed';
+use HTML::Tagset;
 use HTML::TreeBuilder::XPath;
 use HTML::Selector::XPath;
 
@@ -39,7 +40,7 @@ sub scraper(&) {
 
 sub scrape {
     my $self  = shift;
-    my($stuff) = @_;
+    my($stuff, $current) = @_;
 
     my($html, $tree);
 
@@ -54,6 +55,7 @@ sub scrape {
         } else {
             croak "GET $stuff failed: ", $res->status_line;
         }
+        $current = $stuff->as_string;
     } elsif (blessed($stuff) && $stuff->isa('HTML::Element')) {
         $tree = $stuff->clone;
     } elsif (ref($stuff) && ref($stuff) eq 'SCALAR') {
@@ -70,8 +72,8 @@ sub scrape {
 
     my $stash = {};
     no warnings 'redefine';
-    local *process       = create_process(0, $tree, $stash);
-    local *process_first = create_process(1, $tree, $stash);
+    local *process       = create_process(0, $tree, $stash, $current);
+    local *process_first = create_process(1, $tree, $stash, $current);
 
     local *result = sub {
         my @keys = @_;
@@ -97,7 +99,7 @@ sub scrape {
 }
 
 sub create_process {
-    my($first, $tree, $stash) = @_;
+    my($first, $tree, $stash, $uri) = @_;
 
     sub {
         my($exp, @attr) = @_;
@@ -126,9 +128,9 @@ sub create_process {
                     die "Don't know what to do with $key => undef";
                 }
             } elsif ($key =~ s!\[\]$!!) {
-                $stash->{$key} = [ map __get_value($_, $val), @nodes ];
+                $stash->{$key} = [ map __get_value($_, $val, $uri), @nodes ];
             } else {
-                $stash->{$key} = __get_value($nodes[0], $val);
+                $stash->{$key} = __get_value($nodes[0], $val, $uri);
             }
         }
 
@@ -137,7 +139,7 @@ sub create_process {
 }
 
 sub __get_value {
-    my($node, $val) = @_;
+    my($node, $val, $uri) = @_;
 
     if (ref($val) && ref($val) eq 'CODE') {
         local $_ = $node;
@@ -145,9 +147,19 @@ sub __get_value {
     } elsif (blessed($val) && $val->isa('Web::Scraper')) {
         return $val->scrape($node);
     } elsif ($val =~ s!^@!!) {
-        return $node->attr($val);
+        my $value =  $node->attr($val);
+        if ($uri && is_link_element($node, $val)) {
+            require URI;
+            $value = URI->new_abs($value, $uri);
+        }
+        return $value;
     } elsif (lc($val) eq 'content' || lc($val) eq 'text') {
         return $node->as_text;
+    } elsif (lc($val) eq 'raw' || lc($val) eq 'html') {
+        my $html = $node->as_HTML(q("'<>&), undef, {});
+        $html =~ s!^<.*?>!!;
+        $html =~ s!\s*</\w+>\n*$!!;
+        return $html;
     } elsif (ref($val) eq 'HASH') {
         my $values;
         for my $key (keys %$val) {
@@ -157,6 +169,15 @@ sub __get_value {
     } else {
         Carp::croak "Unknown value type $val";
     }
+}
+
+sub is_link_element {
+    my($node, $attr) = @_;
+    my $link_elements = $HTML::Tagset::linkElements{$node->tag} || [];
+    for my $elem (@$link_elements) {
+        return 1 if $attr eq $elem;
+    }
+    return;
 }
 
 sub __stub {
