@@ -217,8 +217,6 @@ Web::Scraper - Web Scraping Toolkit inspired by Scrapi
           url => '@href';
       process "td.ebcPr>span", price => "TEXT";
       process "div.ebPicture >a>img", image => '@src';
-
-      result 'description', 'url', 'price', 'image';
   };
 
   my $ebay = scraper {
@@ -227,7 +225,7 @@ Web::Scraper - Web Scraping Toolkit inspired by Scrapi
       result 'auctions';
   };
 
-  $ebay->scrape( URI->new("http://search.ebay.com/apple-ipod-nano_W0QQssPageNameZWLRS") );
+  my $res = $ebay->scrape( URI->new("http://search.ebay.com/apple-ipod-nano_W0QQssPageNameZWLRS") );
 
 =head1 DESCRIPTION
 
