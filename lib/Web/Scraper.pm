@@ -28,6 +28,12 @@ sub __ua {
     $UserAgent;
 }
 
+sub user_agent {
+    my $self = shift;
+    $self->{user_agent} = shift if @_;
+    $self->{user_agent} || __ua;
+}
+
 sub define {
     my($class, $coderef) = @_;
     bless { code => $coderef }, $class;
@@ -47,7 +53,7 @@ sub scrape {
     if (blessed($stuff) && $stuff->isa('URI')) {
         require Encode;
         require HTTP::Response::Encoding;
-        my $ua  = __ua;
+        my $ua  = $self->user_agent;
         my $res = $ua->get($stuff);
         if ($res->is_success) {
             my $encoding = $res->encoding || "latin-1";
