@@ -20,12 +20,12 @@ sub import {
     *{"$pkg\::result"}        = sub { goto &result  };
 }
 
-my $ua;
+our $UserAgent;
 
 sub __ua {
     require LWP::UserAgent;
-    $ua ||= LWP::UserAgent->new(agent => __PACKAGE__ . "/" . $VERSION);
-    $ua;
+    $UserAgent ||= LWP::UserAgent->new(agent => __PACKAGE__ . "/" . $VERSION);
+    $UserAgent;
 }
 
 sub define {
