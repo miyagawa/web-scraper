@@ -1,6 +1,6 @@
 Revision history for Perl extension Web::Scraper
 
-0.15
+0.15  Sat Sep 15 21:28:10 PDT 2007
         - Call env_proxy in scraper CLI
         - Added $Web::Scraper::UserAgent and $scraper->user_agent accessor to deal
           with UserAgent object
