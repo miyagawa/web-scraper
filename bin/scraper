@@ -18,6 +18,8 @@ my $stuff   = process_args($ARGV[0])
 
 my $term    = Term::ReadLine->new("Web::Scraper");
 my $scraper = scraper { run_loop($_[0], $term) };
+   $scraper->user_agent->env_proxy;
+
 my $result  = $scraper->scrape($stuff);
 
 sub process_args {

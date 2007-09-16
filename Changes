@@ -1,5 +1,11 @@
 Revision history for Perl extension Web::Scraper
 
+0.15
+        - Call env_proxy in scraper CLI
+        - Added $Web::Scraper::UserAgent and $scraper->user_agent accessor to deal
+          with UserAgent object
+        - Don't escape non-ASCII characters into &#xXXXX; in scraper shell 's' and WARN
+
 0.14  Fri Sep 14 16:06:20 PDT 2007
         - Fix bin/scraper to work with older Term::ReadLine.
           (Thanks to Tina Müller [RT:29079])
