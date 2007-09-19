@@ -42,4 +42,5 @@ t/09-process_hash.t
 t/10_invalid_xpath.t
 t/11_absolute.t
 t/12_html.t
+t/13_textnode.t
 t/perlcriticrc

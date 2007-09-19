@@ -3,6 +3,7 @@ use strict;
 use warnings;
 use Carp;
 use Scalar::Util 'blessed';
+use HTML::Entities;
 use HTML::Tagset;
 use HTML::TreeBuilder::XPath;
 use HTML::Selector::XPath;
@@ -160,8 +161,12 @@ sub __get_value {
         }
         return $value;
     } elsif (lc($val) eq 'content' || lc($val) eq 'text') {
-        return $node->as_text;
+        return $node->isTextNode ? $node->string_value : $node->as_text;
     } elsif (lc($val) eq 'raw' || lc($val) eq 'html') {
+        if ($node->isTextNode) {
+            # xxx is this a bug? as_XML doesn't return encoded output
+            return HTML::Entities::encode($node->as_XML, q("'<>&));
+        }
         my $html = $node->as_HTML(q("'<>&), undef, {});
         $html =~ s!^<.*?>!!;
         $html =~ s!\s*</\w+>\n*$!!;

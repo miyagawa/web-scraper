@@ -5,11 +5,24 @@ use warnings;
 use Config;
 use Term::ReadLine;
 use Data::Dumper;
+use HTML::Entities;
 use URI;
 use Web::Scraper;
 use YAML;
 
-sub WARN() { return sub { warn $_->as_HTML(q('"&<>), "", {}) } }
+sub WARN() {
+    return sub {
+        warn $_->isTextNode
+            ? HTML::Entities::encode($_->as_XML, q("'<>&))
+            : $_->as_HTML(q('"&<>), "", {});
+    };
+}
+
+if (eval { require Term::Encoding; 1 }) {
+    my $encoding = Term::Encoding::get_encoding();
+    binmode STDOUT, "encoding($encoding)";
+    binmode STDERR, "encoding($encoding)";
+}
 
 my(@stack, $source);
 
