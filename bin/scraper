@@ -18,12 +18,6 @@ sub WARN() {
     };
 }
 
-if (eval { require Term::Encoding; 1 }) {
-    my $encoding = Term::Encoding::get_encoding();
-    binmode STDOUT, "encoding($encoding)";
-    binmode STDERR, "encoding($encoding)";
-}
-
 my(@stack, $source);
 
 my $stuff   = process_args($ARGV[0])

@@ -8,7 +8,7 @@ use HTML::Tagset;
 use HTML::TreeBuilder::XPath;
 use HTML::Selector::XPath;
 
-our $VERSION = '0.16';
+our $VERSION = '0.17';
 
 sub import {
     my $class = shift;
