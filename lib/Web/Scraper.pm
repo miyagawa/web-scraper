@@ -152,7 +152,7 @@ sub __get_value {
         local $_ = $node;
         return $val->($node);
     } elsif (blessed($val) && $val->isa('Web::Scraper')) {
-        return $val->scrape($node);
+        return $val->scrape($node, $uri);
     } elsif ($val =~ s!^@!!) {
         my $value =  $node->attr($val);
         if ($uri && is_link_element($node, $val)) {

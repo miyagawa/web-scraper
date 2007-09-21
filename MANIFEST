@@ -43,4 +43,5 @@ t/10_invalid_xpath.t
 t/11_absolute.t
 t/12_html.t
 t/13_textnode.t
+t/14_absolute_nested.t
 t/perlcriticrc
