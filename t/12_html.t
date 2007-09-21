@@ -1,6 +1,7 @@
 use strict;
 use Test::Base;
 
+use utf8;
 use Web::Scraper;
 plan tests => 1 * blocks;
 
