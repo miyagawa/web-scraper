@@ -157,7 +157,7 @@ sub __get_value {
         my $value =  $node->attr($val);
         if ($uri && is_link_element($node, $val)) {
             require URI;
-            $value = URI->new_abs($value, $uri)->as_string;
+            $value = URI->new_abs($value, $uri);
         }
         return $value;
     } elsif (lc($val) eq 'content' || lc($val) eq 'text') {
