@@ -2,7 +2,8 @@ package Web::Scraper;
 use strict;
 use warnings;
 use Carp;
-use Scalar::Util 'blessed';
+use Scalar::Util qw(blessed);
+use List::Util qw(first);
 use HTML::Entities;
 use HTML::Tagset;
 use HTML::TreeBuilder::XPath;
@@ -57,7 +58,13 @@ sub scrape {
         my $ua  = $self->user_agent;
         my $res = $ua->get($stuff);
         if ($res->is_success) {
-            my $encoding = $res->encoding || "latin-1";
+            my @encoding = (
+                $res->encoding,
+                # could be multiple because HTTP response and META might be different
+                ($res->header('Content-Type') =~ /charset=([\w\-]+)/g),
+                "latin-1",
+            );
+            my $encoding = first { defined $_ && Encode::find_encoding($_) } @encoding;
             $html = Encode::decode($encoding, $res->content);
         } else {
             croak "GET $stuff failed: ", $res->status_line;
