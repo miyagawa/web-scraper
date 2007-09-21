@@ -1,5 +1,9 @@
 Revision history for Perl extension Web::Scraper
 
+0.19  Thu Sep 20 22:42:30 PDT 2007
+        - Try to get HTML encoding from META tags as well, when there's
+          no charset value in HTTP response header.
+
 0.18  Thu Sep 20 19:49:11 PDT 2007
         - Fixed a bug where URI is not absolutized when scraper is nested
         - Use as_XML not as_HTML in 'RAW'
