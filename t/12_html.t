@@ -53,3 +53,11 @@ bar</p>
 #foo
 --- expected
 <p>foo bar</p><p>bar</p>
+
+=== non-ascii
+--- html
+<p id="foo">テスト</p>
+--- selector
+#foo
+--- expected
+テスト

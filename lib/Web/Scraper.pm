@@ -167,7 +167,7 @@ sub __get_value {
             # xxx is this a bug? as_XML doesn't return encoded output
             return HTML::Entities::encode($node->as_XML, q("'<>&));
         }
-        my $html = $node->as_HTML(q("'<>&), undef, {});
+        my $html = $node->as_XML;
         $html =~ s!^<.*?>!!;
         $html =~ s!\s*</\w+>\n*$!!;
         return $html;
