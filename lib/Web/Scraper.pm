@@ -9,7 +9,7 @@ use HTML::Tagset;
 use HTML::TreeBuilder::XPath;
 use HTML::Selector::XPath;
 
-our $VERSION = '0.20';
+our $VERSION = '0.21';
 
 sub import {
     my $class = shift;

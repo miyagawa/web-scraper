@@ -4,6 +4,7 @@ all_from 'lib/Web/Scraper.pm';
 
 requires 'Scalar::Util';
 requires 'HTML::TreeBuilder::XPath', 0.08;
+requires 'HTML::TreeBuilder', 3.23;
 requires 'XML::XPathEngine', 0.08;
 requires 'HTML::Selector::XPath';
 requires 'LWP::UserAgent';

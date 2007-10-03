@@ -1,5 +1,9 @@
 Revision history for Perl extension Web::Scraper
 
+0.21  Wed Oct  3 10:37:13 PDT 2007
+        - Bumped up HTML::TreeBuilder dependency to fix 12_html.t issues
+          [rt.cpan.org #29733]
+
 0.20  Wed Oct  3 00:28:13 PDT 2007
         - Fixed a bug where URI is not absolutized with a hash reference value
         - Added eg/jp-playstation-store.pl
