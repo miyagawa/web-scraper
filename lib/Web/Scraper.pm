@@ -9,7 +9,7 @@ use HTML::Tagset;
 use HTML::TreeBuilder::XPath;
 use HTML::Selector::XPath;
 
-our $VERSION = '0.19';
+our $VERSION = '0.20';
 
 sub import {
     my $class = shift;
@@ -181,7 +181,7 @@ sub __get_value {
     } elsif (ref($val) eq 'HASH') {
         my $values;
         for my $key (keys %$val) {
-            $values->{$key} = __get_value($node, $val->{$key});
+            $values->{$key} = __get_value($node, $val->{$key}, $uri);
         }
         return $values;
     } else {
