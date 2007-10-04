@@ -7,8 +7,13 @@ plan tests => 1 * blocks;
 
 filters {
     selector => 'chomp',
-    expected => 'chomp',
+    expected => [ 'chomp', 'newline' ],
+    html     => 'newline',
 };
+
+sub newline {
+    s/\\n\n/\n/g;
+}
 
 run {
     my $block = shift;
@@ -62,3 +67,20 @@ bar</p>
 #foo
 --- expected
 テスト
+
+=== textarea
+--- html
+<textarea>
+foo
+bar
+\n
+baz
+</textarea>
+--- selector
+textarea
+--- expected
+\n
+foo
+bar
+\n
+baz
