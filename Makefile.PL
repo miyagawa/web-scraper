@@ -11,6 +11,7 @@ requires 'LWP::UserAgent';
 requires 'HTTP::Response::Encoding';
 requires 'HTML::Entities';
 requires 'HTML::Tagset';
+requires 'UNIVERSAL::require';
 requires 'URI';
 requires 'YAML';
 
