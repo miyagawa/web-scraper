@@ -24,7 +24,8 @@ Web::Scraper::Filter - Base class for Web::Scraper filters
   use YAML ();
 
   sub filter {
-      YAML::Load(shift);
+      my($self, $value) = @_;
+      YAML::Load($value);
   }
 
   1;
