@@ -186,9 +186,9 @@ sub __get_value {
         }
         return $values;
     } elsif (ref($val) eq 'ARRAY') {
-        my $how = shift @$val;
+        my $how   = $val->[0];
         my $value = __get_value($node, $how, $uri);
-        for my $filter (@$val) {
+        for my $filter (@$val[1..$#$val]) {
             $value = run_filter($value, $filter);
         }
         return $value;
