@@ -16,7 +16,9 @@ run {
         result 'want';
     };
     my $want = $s->scrape('<a>foo</a>');
-    is $want, $block->expected, $block->name;
+    my $expected = $block->expected eq 'undef' ? undef : $block->expected;
+
+    is $want, $expected, $block->name;
 };
 
 BEGIN {
@@ -68,3 +70,21 @@ gppcbs
 ['TEXT', 'bar', sub { s/foo/bar/ } ]
 --- expected
 barbar
+
+=== no match
+--- want
+['TEXT', sub { s/xxx/yyy/g }]
+--- expected
+foo
+
+=== undef
+--- want
+['TEXT', sub { return }]
+--- expected
+undef
+
+=== number
+--- want
+['TEXT', sub { return 3 }]
+--- expected
+3

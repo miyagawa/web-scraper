@@ -90,7 +90,9 @@ sub scrape {
     local *process       = create_process(0, $tree, $stash, $current);
     local *process_first = create_process(1, $tree, $stash, $current);
 
+    my $retval;
     local *result = sub {
+        $retval++;
         my @keys = @_;
 
         if (@keys == 1) {
@@ -108,7 +110,7 @@ sub scrape {
     $tree->delete;
 
     # check user specified return value
-    return $ret if $ret;
+    return $ret if $retval;
 
     return $stash;
 }
@@ -226,7 +228,7 @@ sub run_filter {
     }
 
     no warnings 'uninitialized';
-    if ($retval =~ /^\d+$/ && $_ ne $value) {
+    if (($retval =~ /^\d+$/ and $_ ne $value) or (defined $retval and !$retval)) {
         $value = $_;
     } else {
         $value = $retval;
