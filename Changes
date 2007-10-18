@@ -1,5 +1,8 @@
 Revision history for Perl extension Web::Scraper
 
+0.22  Wed Oct 17 17:51:54 PDT 2007
+        - 's' on scraper shell now prints to pager (e.g. less) if PAGER is set
+
 0.21_01 Thu Oct  4 01:05:00 PDT 2007
         - Added an experimental filter support
           (Thanks to hirose31, tokuhirom and Yappo for brainstorming)

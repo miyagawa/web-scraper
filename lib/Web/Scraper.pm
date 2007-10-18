@@ -10,7 +10,7 @@ use HTML::TreeBuilder::XPath;
 use HTML::Selector::XPath;
 use UNIVERSAL::require;
 
-our $VERSION = '0.21_01';
+our $VERSION = '0.22';
 
 sub import {
     my $class = shift;
