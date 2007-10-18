@@ -18,6 +18,16 @@ sub WARN() {
     };
 }
 
+my $print = sub {
+    if ($ENV{PAGER}) {
+        open my $pager, "|$ENV{PAGER}";
+        print $pager @_;
+    } else {
+        print @_;
+
+    }
+};
+
 my(@stack, $source);
 
 my $stuff   = process_args($ARGV[0])
@@ -56,7 +66,7 @@ sub run_loop {
         } elsif ($in eq 'y') {
             warn Dump result;
         } elsif ($in eq 's') {
-            warn $tree->as_HTML(q('"&<>), "  ", {});
+            $print->($tree->as_HTML(q('"&<>), "  ", {}));
         } elsif ($in eq 'q') {
             return;
         } elsif ($in eq 'c') {
@@ -75,23 +85,23 @@ sub generate_code {
     my($source, @stack) = @_;
 
     my $code_stack = join "\n", map { "    $_" . (/;$/ ? "" : ";") } @stack;
-    my $stuff =
-        $source->[0] eq 'stdin'         ? '\join "", <STDIN>' :
-        $source->[0] eq 'URI'           ? qq(URI->new("$source->[1]")) :
-        $source->[0] eq 'file'          ? qq(\\do { my \$file = "$source->[1]"; open my \$fh, \$file or die "\$file: \$!"; join '', <\$fh> }) :
+    my($var, $stuff) =
+        $source->[0] eq 'stdin'         ? ('$input', '\join "", <STDIN>') :
+        $source->[0] eq 'URI'           ? ('$uri',   qq(URI->new("$source->[1]"))) :
+        $source->[0] eq 'file'          ? ('$file',  qq(\\do { my \$file = "$source->[1]"; open my \$fh, \$file or die "\$file: \$!"; join '', <\$fh> })) :
                                           '...';
 
-    return <<CODE;
+return <<CODE;
 #!$Config{perlpath}
 use strict;
 use Web::Scraper;
 use URI;
 
-my \$stuff   = $stuff;
+my $var = $stuff;
 my \$scraper = scraper {
 $code_stack
 };
-my \$result = \$scraper->scrape(\$stuff);
+my \$result = \$scraper->scrape($var);
 CODE
 
 }
