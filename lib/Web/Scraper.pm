@@ -121,7 +121,7 @@ sub create_process {
     sub {
         my($exp, @attr) = @_;
 
-        my $xpath = $exp =~ m!^/! ? $exp : HTML::Selector::XPath::selector_to_xpath($exp);
+        my $xpath = $exp =~ m!^(?:/|id\()! ? $exp : HTML::Selector::XPath::selector_to_xpath($exp);
         my @nodes = eval {
             local $SIG{__WARN__} = sub { };
             $tree->findnodes($xpath);
@@ -174,8 +174,11 @@ sub __get_value {
         return $node->isTextNode ? $node->string_value : $node->as_text;
     } elsif (lc($val) eq 'raw' || lc($val) eq 'html') {
         if ($node->isTextNode) {
-            # xxx is this a bug? as_XML doesn't return encoded output
-            return HTML::Entities::encode($node->as_XML, q("'<>&));
+            if ($HTML::TreeBuilder::XPath::VERSION < 0.09) {
+                return HTML::Entities::encode($node->as_XML, q("'<>&));
+            } else {
+                return $node->as_XML;
+            }
         }
         my $html = $node->as_XML;
         $html =~ s!^<.*?>!!;
