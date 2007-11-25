@@ -53,6 +53,7 @@ TEXT
  bar & baz
 
 === RAW HTML
+--- SKIP
 --- html
 <p><s>foo</s> bar &amp; baz</p>
 --- selector

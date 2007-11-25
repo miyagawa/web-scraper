@@ -6,7 +6,6 @@ eg/extract-links.pl
 eg/hatena-keyword.pl
 eg/jp-playstation-store.pl
 eg/rel-tag.pl
-eg/search-cpan.pl
 eg/twitter-friends.pl
 inc/Module/Install.pm
 inc/Module/Install/Base.pm
