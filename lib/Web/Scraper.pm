@@ -10,7 +10,7 @@ use HTML::TreeBuilder::XPath;
 use HTML::Selector::XPath;
 use UNIVERSAL::require;
 
-our $VERSION = '0.23';
+our $VERSION = '0.24';
 
 sub import {
     my $class = shift;
@@ -218,8 +218,9 @@ sub run_filter {
         unless ($module->isa('Web::Scraper::Filter')) {
             $module->require or Carp::croak("Loading $module: $@");
         }
-
         $callback = sub { $module->new->filter(shift) };
+    } elsif (blessed($filter) && $filter->can('filter')) {
+        $callback = sub { $filter->filter(shift) };
     } else {
         Carp::croak("Don't know filter type $filter");
     }

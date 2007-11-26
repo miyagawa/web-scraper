@@ -1,5 +1,10 @@
 Revision history for Perl extension Web::Scraper
 
+0.24  Sun Nov 25 15:58:38 PST 2007
+        - Support duck typing in filter args to take object that has 'filter' method
+          This could give Web::Scraper::Filter::Pipe a better interface
+          (Thanks to hanekomu and tokuhirom)
+
 0.23  Sat Nov 24 17:21:14 PST 2007
         - Upped Web::Scraper dependency
         - Skip &amp; test until HTML::TreeBuilder::XPath fixes it

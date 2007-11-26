@@ -88,3 +88,9 @@ undef
 ['TEXT', sub { return 3 }]
 --- expected
 3
+
+=== object
+--- want
+['TEXT', Web::Scraper::Filter::foo->new]
+--- expected
+gpp
