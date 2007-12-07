@@ -232,7 +232,8 @@ sub run_filter {
     }
 
     no warnings 'uninitialized';
-    if (($retval =~ /^\d+$/ and $_ ne $value) or (defined $retval and !$retval)) {
+    # sub { s/foo/bar/ } returns number or PL_sv_no which is stringified to ''
+    if (($retval =~ /^\d+$/ and $_ ne $value) or (defined($retval) and $retval eq '')) {
         $value = $_;
     } else {
         $value = $retval;
