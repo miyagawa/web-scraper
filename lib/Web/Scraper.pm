@@ -54,23 +54,25 @@ sub scrape {
     my($html, $tree);
 
     if (blessed($stuff) && $stuff->isa('URI')) {
-        require Encode;
-        require HTTP::Response::Encoding;
         my $ua  = $self->user_agent;
         my $res = $ua->get($stuff);
-        if ($res->is_success) {
+        return $self->scrape($res, $stuff->as_string);
+    } elsif (blessed($stuff) && $stuff->isa('HTTP::Response')) {
+        require Encode;
+        require HTTP::Response::Encoding;
+        if ($stuff->is_success) {
             my @encoding = (
-                $res->encoding,
+                $stuff->encoding,
                 # could be multiple because HTTP response and META might be different
-                ($res->header('Content-Type') =~ /charset=([\w\-]+)/g),
+                ($stuff->header('Content-Type') =~ /charset=([\w\-]+)/g),
                 "latin-1",
             );
             my $encoding = first { defined $_ && Encode::find_encoding($_) } @encoding;
-            $html = Encode::decode($encoding, $res->content);
+            $html = Encode::decode($encoding, $stuff->content);
         } else {
-            croak "GET $stuff failed: ", $res->status_line;
+            croak "GET $stuff failed: ", $stuff->status_line;
         }
-        $current = $stuff->as_string;
+        $current ||= $stuff->request->uri;
     } elsif (blessed($stuff) && $stuff->isa('HTML::Element')) {
         $tree = $stuff->clone;
     } elsif (ref($stuff) && ref($stuff) eq 'SCALAR') {
