@@ -1,5 +1,9 @@
 Revision history for Perl extension Web::Scraper
 
+0.25  Sun Jan 11 13:36:44 PST 2009
+        - scrape() now accepts HTTP::Response as well for Remedie/Plagger
+        - repository moved to github http://github.com/miyagawa/web-scraper/tree/master
+
 0.24  Sun Nov 25 15:58:38 PST 2007
         - Support duck typing in filter args to take object that has 'filter' method
           This could give Web::Scraper::Filter::Pipe a better interface
