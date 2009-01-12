@@ -9,6 +9,7 @@ use HTML::Tagset;
 use HTML::TreeBuilder::XPath;
 use HTML::Selector::XPath;
 use UNIVERSAL::require;
+use Web::Scraper::Node;
 
 our $VERSION = '0.25';
 
@@ -37,6 +38,20 @@ sub user_agent {
     $self->{user_agent} || __ua;
 }
 
+our $UseLibXML = 0;
+
+sub use_libxml {
+    my $self = shift;
+
+    if (blessed $self) {
+        $self->{use_libxml} = shift if @_;
+        return $self->{use_libxml} || $UseLibXML;
+    } else {
+        $UseLibXML = shift if @_;
+        return $UseLibXML;
+    }
+}
+
 sub define {
     my($class, $coderef) = @_;
     bless { code => $coderef }, $class;
@@ -50,7 +65,6 @@ sub scraper(&) {
 sub scrape {
     my $self  = shift;
     my($stuff, $current) = @_;
-
     my($html, $tree);
 
     if (blessed($stuff) && $stuff->isa('URI')) {
@@ -73,18 +87,41 @@ sub scrape {
             croak "GET $stuff failed: ", $stuff->status_line;
         }
         $current ||= $stuff->request->uri;
-    } elsif (blessed($stuff) && $stuff->isa('HTML::Element')) {
+    } elsif (blessed($stuff) &&
+             ($stuff->isa('Web::Scraper::Node::HTMLElement') || $stuff->isa('HTML::Element'))) {
         $tree = $stuff->clone;
+    } elsif (blessed($stuff) &&
+             ($stuff->isa('Web::Scraper::Node::LibXML') || $stuff->isa('XML::LibXML::Element'))) {
+        $html = $stuff->toString;
+    } elsif (blessed($stuff) && $stuff->isa('Web::Scraper::Node::HTMLElement')) {
+
     } elsif (ref($stuff) && ref($stuff) eq 'SCALAR') {
         $html = $$stuff;
     } else {
         $html = $stuff;
     }
 
+    if ($self->use_libxml) {
+        eval { require XML::LibXML; };
+        if ($@) {
+            Carp::croak "use_libxml is set but couldn't load XML::LibXML: $@";
+        }
+    }
+
     $tree ||= do {
-        my $t = HTML::TreeBuilder::XPath->new;
-        $t->parse($html);
-        $t;
+        if ($self->use_libxml) {
+            my $parser = XML::LibXML->new();
+            $parser->recover(1);
+            $parser->recover_silently(1);
+            $parser->keep_blanks(0);
+            $parser->expand_entities(1);
+            my $dom = $parser->parse_html_string($html);
+            $dom;
+        } else {
+            my $t = HTML::TreeBuilder::XPath->new;
+            $t->parse($html);
+            $t;
+        }
     };
 
     my $stash = {};
@@ -109,7 +146,9 @@ sub scrape {
     };
 
     my $ret = $self->{code}->($tree);
-    $tree->delete;
+    unless ($self->use_libxml) {
+        $tree->delete;
+    }
 
     # check user specified return value
     return $ret if $retval;
@@ -126,7 +165,7 @@ sub create_process {
         my $xpath = $exp =~ m!^(?:/|id\()! ? $exp : HTML::Selector::XPath::selector_to_xpath($exp);
         my @nodes = eval {
             local $SIG{__WARN__} = sub { };
-            $tree->findnodes($xpath);
+            map Web::Scraper::Node->new($_), $tree->findnodes($xpath);
         };
 
         if ($@) {
@@ -166,25 +205,20 @@ sub __get_value {
     } elsif (blessed($val) && $val->isa('Web::Scraper')) {
         return $val->scrape($node, $uri);
     } elsif ($val =~ s!^@!!) {
-        my $value =  $node->attr($val);
+        my $value = $node->attr($val);
         if ($uri && is_link_element($node, $val)) {
             require URI;
             $value = URI->new_abs($value, $uri);
         }
         return $value;
     } elsif (lc($val) eq 'content' || lc($val) eq 'text') {
-        return $node->isTextNode ? $node->string_value : $node->as_text;
+        return $node->text_content;
     } elsif (lc($val) eq 'raw' || lc($val) eq 'html') {
-        if ($node->isTextNode) {
-            if ($HTML::TreeBuilder::XPath::VERSION < 0.09) {
-                return HTML::Entities::encode($node->as_XML, q("'<>&));
-            } else {
-                return $node->as_XML;
-            }
+        my($html, $has_container) = $node->to_html;
+        if ($has_container) {
+            $html =~ s!^<.*?>!!;
+            $html =~ s!\s*</\w+>\n*$!!;
         }
-        my $html = $node->as_XML;
-        $html =~ s!^<.*?>!!;
-        $html =~ s!\s*</\w+>\n*$!!;
         return $html;
     } elsif (ref($val) eq 'HASH') {
         my $values;
@@ -246,7 +280,8 @@ sub run_filter {
 
 sub is_link_element {
     my($node, $attr) = @_;
-    my $link_elements = $HTML::Tagset::linkElements{$node->tag} || [];
+    my $tag = $node->tag;
+    my $link_elements = $HTML::Tagset::linkElements{$tag} || [];
     for my $elem (@$link_elements) {
         return 1 if $attr eq $elem;
     }

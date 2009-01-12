@@ -2,7 +2,7 @@ use strict;
 use Test::Base;
 
 use Web::Scraper;
-plan tests => 1 * blocks;
+plan tests => 2 * blocks;
 
 filters {
     selector => 'chomp',
@@ -11,12 +11,15 @@ filters {
 
 run {
     my $block = shift;
-    my $s = scraper {
-        process $block->selector, text => 'TEXT';
-        result 'text';
-    };
-    my $text = $s->scrape($block->html);
-    is $text, $block->expected, $block->name;
+    for (0..1) {
+        my $s = scraper {
+            process $block->selector, text => 'TEXT';
+            result 'text';
+        };
+        $s->use_libxml($_);
+        my $text = $s->scrape($block->html);
+        is $text, $block->expected, $block->name;
+    }
 };
 
 __DATA__

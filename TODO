@@ -1,0 +1,4 @@
+- Fallback LibXML to HTML::TreeBuilder when 1) it's not available or 2) barfs on broken HTML
+- Automatically dispatch LibXML and H::TB looking at Contnet-Type and XML decl.
+- Make tests pass
+- Add an API adaptor between H::TB nodes and XML::LibXML::Element for callback functions
