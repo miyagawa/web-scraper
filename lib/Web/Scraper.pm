@@ -1,7 +1,7 @@
 package Web::Scraper;
 use strict;
 use warnings;
-use 5.8.1;
+use 5.008001;
 use Carp;
 use Scalar::Util qw(blessed);
 use List::Util qw(first);
