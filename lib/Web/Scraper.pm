@@ -43,7 +43,7 @@ sub define {
     bless { code => $coderef }, $class;
 }
 
-sub scraper(&) {
+sub scraper(&) { ## no critic
     my($coderef) = @_;
     bless { code => $coderef }, __PACKAGE__;
 }
@@ -278,6 +278,7 @@ Web::Scraper - Web Scraping Toolkit inspired by Scrapi
 
   use URI;
   use Web::Scraper;
+  use HTML::TreeBuilder::LibXML; # optional, for speedup
 
   my $ebay_auction = scraper {
       process "h3.ens>a",
