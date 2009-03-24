@@ -29,6 +29,7 @@ author_tests "xt";
 WriteAll;
 
 sub setup_libxml_tests {
+    warn "You have HTML::TreeBuilder::LibXML. Writing tests for it.\n";
     my @tests = glob "t/*.t";
     for my $test (@tests) {
         (my $new = $test) =~ s!^t/!t/libxml-!;
@@ -38,7 +39,7 @@ sub setup_libxml_tests {
         while (<$in>) {
             print $out $_;
             if (/^use Web::Scraper/) {
-                print $out "use HTML::TreeBuilder::LibXML;\n";
+                print $out "use HTML::TreeBuilder::LibXML;\nHTML::TreeBuilder::LibXML->replace_original;\n";
             }
         }
     }
