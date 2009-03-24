@@ -18,7 +18,28 @@ requires 'YAML';
 build_requires 'Test::More';
 install_script 'bin/scraper';
 
+if (eval { require HTML::TreeBuilder::LibXML }) {
+    setup_libxml_tests();
+}
+
 use_test_base;
 auto_include;
+author_tests "xt";
 WriteAll;
 
+sub setup_libxml_tests {
+    unlink glob "t/libxml-*.t";
+    my @tests = glob "t/*.t";
+    for my $test (@tests) {
+        (my $new = $test) =~ s!^t/!t/libxml-!;
+        open my $in, "<", $test;
+        open my $out, ">", $new;
+
+        while (<$in>) {
+            print $out $_;
+            if (/^use Web::Scraper/) {
+                print $out "use HTML::TreeBuilder::LibXML;\n";
+            }
+        }
+    }
+}
