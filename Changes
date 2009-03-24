@@ -1,5 +1,9 @@
 Revision history for Perl extension Web::Scraper
 
+0.27  Tue Mar 24 12:09:04 PDT 2009
+        - Added tests to use HTML::TreeBuilder::LibXML
+          (Thanks to Tokuhiro Matsuno)
+
 0.26  Thu Jan 15 11:37:56 PST 2009
         - Fixed an error message when GET request fails
 
