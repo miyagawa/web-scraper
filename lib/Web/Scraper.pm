@@ -85,6 +85,7 @@ sub scrape {
     $tree ||= do {
         my $t = HTML::TreeBuilder::XPath->new;
         $t->parse($html);
+        $t->eof;
         $t;
     };
 
