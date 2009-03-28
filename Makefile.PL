@@ -19,7 +19,7 @@ build_requires 'Test::More';
 install_script 'bin/scraper';
 
 unlink glob "t/libxml-*.t";
-if (eval { require HTML::TreeBuilder::LibXML }) {
+if (eval q{ use HTML::TreeBuilder::LibXML 0.04 }) {
     setup_libxml_tests();
 }
 
