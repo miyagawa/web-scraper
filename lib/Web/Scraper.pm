@@ -334,7 +334,7 @@ a string instead of URI or HTTP::Response.
 
 This way Web::Scraper can resolve the relative links found in the document.
 
-=head1 process
+=item process
 
   scraper {
       process "tag.class", key => 'TEXT';
@@ -367,6 +367,8 @@ XPath expression and otherwise CSS selector.
   # <ul><li id="1">foo</li><li id="2">bar</li></ul>
   # list => [ { id => "1", text => "foo" }, { id => "2", text => "bar" } ];
   process "li", "list[]" => { id => '@id', text => "TEXT" };
+
+=back
 
 =head1 NESTED SCRAPERS
 
