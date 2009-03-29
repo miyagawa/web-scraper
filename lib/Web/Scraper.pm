@@ -279,29 +279,102 @@ Web::Scraper - Web Scraping Toolkit inspired by Scrapi
 
   use URI;
   use Web::Scraper;
-  use HTML::TreeBuilder::LibXML; # optional, for speedup
 
-  my $ebay_auction = scraper {
-      process "h3.ens>a",
-          description => 'TEXT',
-          url => '@href';
-      process "td.ebcPr>span", price => "TEXT";
-      process "div.ebPicture >a>img", image => '@src';
+  my $tweets = scraper {
+      process "li.status", "tweets[]" => scraper {
+          process ".entry-content", body => 'TEXT';
+          process ".entry-date", when => 'TEXT';
+          process 'a[rel="bookmark"]', link => '@href';
+      };
   };
 
-  my $ebay = scraper {
-      process "table.ebItemlist tr.single",
-          "auctions[]" => $ebay_auction;
-      result 'auctions';
-  };
+  my $res = $tweets->scrape( URI->new("http://twitter.com/miyagawa") );
 
-  my $res = $ebay->scrape( URI->new("http://search.ebay.com/apple-ipod-nano_W0QQssPageNameZWLRS") );
+  for my $tweet (@{$res->{tweets}}) {
+      print "$tweet->{body} $tweet->{when} (link: $tweet->{link})\n";
+  }
 
 =head1 DESCRIPTION
 
-Web::Scraper is a web scraper toolkit, inspired by Ruby's equivalent Scrapi.
+Web::Scraper is a web scraper toolkit, inspired by Ruby's equivalent
+Scrapi. It allows you to write a web scraping script or class in a
+DSL-ish but still pure-perl language.
 
-B<THIS MODULE IS IN ITS BETA QUALITY. THE API IS STOLEN FROM SCRAPI BUT MAY CHANGE IN THE FUTURE>
+=head1 METHODS
+
+=over 4
+
+=item scraper
+
+  $scraper = scraper { ... };
+
+Creates a new Web::Scraper object by wrapping the DSL code that will be fired when I<scrape> method is called.
+
+=item scrape
+
+  $res = $scraper->scrape(URI->new($uri));
+  $res = $scraper->scrape($html_content);
+  $res = $scraper->scrape(\$html_content);
+  $res = $scraper->scrape($http_response);
+  $res = $scraper->scrape($html_element);
+
+Retrieves the HTML from URI, HTTP::Response, HTML::Tree or text
+strings and creates a DOM object, then fires the callback scraper code
+to retrieve the data structure.
+
+If you pass URI or HTTP::Response object, Web::Scraper will
+automatically guesses the encoding of the content by looking at
+Content-Type headers and META tags. Otherwise you need to decode the
+HTML to Unicode before passing it to I<scrape> method.
+
+You can optionally pass the base URL when you pass the HTML content as
+a string instead of URI or HTTP::Response.
+
+  $res = $scraper->scrape($html_content, "http://example.com/foo");
+
+This way Web::Scraper can resolve the relative links found in the document.
+
+=head1 process
+
+  scraper {
+      process "tag.class", key => 'TEXT';
+      process '//tag[contains(@foo, "bar")]', key2 => '@attr';
+  };
+
+I<process> is the method to find matching elements from HTML with CSS
+selector or XPath expression, then extract text or attributes into the
+result stash.
+
+If the first argument begins with "//" or "id(" it's treated as an
+XPath expression and otherwise CSS selector.
+
+  # <span class="date">2008/12/21</span>
+  # date => "2008/12/21"
+  process ".date", date => 'TEXT';
+
+  # <div class="body"><a href="http://example.com/">foo</a></div>
+  # link => URI->new("http://example.com/")
+  process ".body > a", link => '@href';
+
+  # <div class="body"><a href="http://example.com/">foo</a></div>
+  # link => URI->new("http://example.com/"), text => "foo"
+  process ".body > a", { link => '@href', text => 'TEXT' };
+
+  # <ul><li>foo</li><li>bar</li></ul>
+  # list => [ "foo", "bar" ]
+  process "li", "list[]" => "TEXT";
+
+  # <ul><li id="1">foo</li><li id="2">bar</li></ul>
+  # list => [ { id => "1", text => "foo" }, { id => "2", text => "bar" } ];
+  process "li", "list[]" => { id => '@id', text => "TEXT" };
+
+=head1 NESTED SCRAPERS
+
+TBD
+
+=head1 FILTERS
+
+TBD
 
 =head1 AUTHOR
 
