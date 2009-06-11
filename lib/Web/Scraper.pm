@@ -358,7 +358,7 @@ XPath expression and otherwise CSS selector.
 
   # <div class="body"><a href="http://example.com/">foo</a></div>
   # link => URI->new("http://example.com/"), text => "foo"
-  process ".body > a", { link => '@href', text => 'TEXT' };
+  process ".body > a", link => '@href', text => 'TEXT';
 
   # <ul><li>foo</li><li>bar</li></ul>
   # list => [ "foo", "bar" ]
