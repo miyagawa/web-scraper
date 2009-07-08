@@ -18,6 +18,7 @@ sub import {
     my $pkg   = caller;
 
     no strict 'refs';
+    no warnings 'redefine';
     *{"$pkg\::scraper"}       = _build_scraper($class);
     *{"$pkg\::process"}       = sub { goto &process };
     *{"$pkg\::process_first"} = sub { goto &process_first };
