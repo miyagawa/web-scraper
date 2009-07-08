@@ -1,5 +1,8 @@
 Revision history for Perl extension Web::Scraper
 
+0.30  Wed Jul  8 15:47:21 PDT 2009
+        - No warnings when use()d multiple times in the same package
+
 0.29  Wed Jul  8 13:40:14 PDT 2009
         - Adds Web::Scraper::LibXML which uses HTML::TreeBuilder::LibXML
           (without the replace_original hack)

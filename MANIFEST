@@ -53,6 +53,7 @@ t/15_absolute_hash.t
 t/16_filter.t
 t/17_filter_loop.t
 t/18_http_response.t
+t/redefine.t
 xt/97_podspell.t
 xt/98_perlcritic.t
 xt/99_pod.t
