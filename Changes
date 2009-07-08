@@ -1,5 +1,9 @@
 Revision history for Perl extension Web::Scraper
 
+0.29  Wed Jul  8 13:40:14 PDT 2009
+        - Adds Web::Scraper::LibXML which uses HTML::TreeBuilder::LibXML
+          (without the replace_original hack)
+
 0.28  Sat Mar 28 14:31:45 PDT 2009
         - Call ->eof when parsing with HTML::TreeBuilder
           (Thanks to Tokuhiro Matsuno)
