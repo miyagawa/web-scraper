@@ -18,7 +18,7 @@ sub import {
     my $pkg   = caller;
 
     no strict 'refs';
-    *{"$pkg\::scraper"} = \&scraper;
+    *{"$pkg\::scraper"}       = _build_scraper($class);
     *{"$pkg\::process"}       = sub { goto &process };
     *{"$pkg\::process_first"} = sub { goto &process_first };
     *{"$pkg\::result"}        = sub { goto &result  };
@@ -43,9 +43,12 @@ sub define {
     bless { code => $coderef }, $class;
 }
 
-sub scraper(&) { ## no critic
-    my($coderef) = @_;
-    bless { code => $coderef }, __PACKAGE__;
+sub _build_scraper {
+    my $class = shift;
+    return sub(&) {
+        my($coderef) = @_;
+        bless { code => $coderef }, $class;
+    };
 }
 
 sub scrape {
@@ -82,12 +85,7 @@ sub scrape {
         $html = $stuff;
     }
 
-    $tree ||= do {
-        my $t = HTML::TreeBuilder::XPath->new;
-        $t->parse($html);
-        $t->eof;
-        $t;
-    };
+    $tree ||= $self->build_tree($html);
 
     my $stash = {};
     no warnings 'redefine';
@@ -117,6 +115,15 @@ sub scrape {
     return $ret if $retval;
 
     return $stash;
+}
+
+sub build_tree {
+    my($self, $html) = @_;
+
+    my $t = HTML::TreeBuilder::XPath->new;
+    $t->parse($html);
+    $t->eof;
+    $t;
 }
 
 sub create_process {
