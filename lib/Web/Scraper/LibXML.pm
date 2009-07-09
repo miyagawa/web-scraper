@@ -31,16 +31,20 @@ Web::Scraper::LibXML - Drop-in replacement for Web::Scraper to use LibXML
 =head1 DESCRIPTION
 
 Web::Scraper::LibXML is a drop-in replacement for Web::Scraper to use
-the fast libxml-based HTML tree builder.
+the fast libxml-based HTML tree builder, HTML::TreeBuilder::LibXML.
 
 This is almost identical to HTML::TreeBuilder::LibXML's
 I<replace_original> installer, like:
 
   use HTML::TreeBuilder::LibXML;
   HTML::TreeBuilder::LibXML->replace_original();
+  
+  use Web::Scraper;
+  my $scraper = scraper { ... };
+  # this code uses LibXML parser
 
 which overrides HTML::TreeBuilder::XPath's new() constructor so that
-L<ALL> of your code using HTML::TreeBuilder::XPath is now switched to
+L<ALL> of your code using HTML::TreeBuilder::XPath is switched to the
 libxml based parser.
 
 This module, instead, gives you more control over which TreeBuilder to
