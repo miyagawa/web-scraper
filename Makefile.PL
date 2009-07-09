@@ -15,6 +15,10 @@ requires 'UNIVERSAL::require';
 requires 'URI';
 requires 'YAML';
 
+include 'Module::AutoInstall';
+feature 'LibXML', -default => 1, 'HTML::TreeBuilder::LibXML', 0.04;
+auto_install;
+
 build_requires 'Test::More';
 install_script 'bin/scraper';
 
