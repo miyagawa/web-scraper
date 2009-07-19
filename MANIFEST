@@ -8,8 +8,10 @@ eg/hatena-keyword.pl
 eg/jp-playstation-store.pl
 eg/rel-tag.pl
 eg/twitter-friends.pl
+inc/Module/AutoInstall.pm
 inc/Module/Install.pm
 inc/Module/Install/AuthorTests.pm
+inc/Module/Install/AutoInstall.pm
 inc/Module/Install/Base.pm
 inc/Module/Install/Can.pm
 inc/Module/Install/Fetch.pm
@@ -54,6 +56,7 @@ t/16_filter.t
 t/17_filter_loop.t
 t/18_http_response.t
 t/redefine.t
+t/xml-simple.t
 xt/97_podspell.t
 xt/98_perlcritic.t
 xt/99_pod.t
