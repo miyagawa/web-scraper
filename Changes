@@ -1,5 +1,10 @@
 Revision history for Perl extension Web::Scraper
 
+0.32  Wed Feb  3 22:13:01 PST 2010
+        - Removes poking around charset and LWP's decoded_content
+          (Thanks to flatwhatson)
+        - More docs (jshirley)
+
 0.31  Sun Jul 19 00:43:54 PDT 2009
         - Use new LWP's content_charset method instead of HTTP::Response::Encoding
           (Thanks to hanekomu)
