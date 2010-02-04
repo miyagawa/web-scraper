@@ -63,16 +63,8 @@ sub scrape {
         my $res = $ua->get($stuff);
         return $self->scrape($res, $stuff->as_string);
     } elsif (blessed($stuff) && $stuff->isa('HTTP::Response')) {
-        require Encode;
         if ($stuff->is_success) {
-            my @encoding = (
-                $stuff->content_charset,
-                # could be multiple because HTTP response and META might be different
-                ($stuff->header('Content-Type') =~ /charset=([\w\-]+)/g),
-                "latin-1",
-            );
-            my $encoding = first { defined $_ && Encode::find_encoding($_) } @encoding;
-            $html = Encode::decode($encoding, $stuff->content);
+            $html = $stuff->decoded_content;
         } else {
             croak "GET " . $stuff->request->uri . " failed: ", $stuff->status_line;
         }
