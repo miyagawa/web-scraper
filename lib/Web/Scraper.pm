@@ -391,6 +391,10 @@ XPath expression and otherwise CSS selector.
   # list => [ { id => "1", text => "foo" }, { id => "2", text => "bar" } ];
   process "li", "list[]" => { id => '@id', text => "TEXT" };
 
+=head2 process_first
+
+Same as I<process>, but analyzes only first node
+
 =head1 EXAMPLES
 
 There are many examples in the C<eg/> dir packaged in this distribution.
