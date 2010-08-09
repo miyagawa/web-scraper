@@ -405,6 +405,14 @@ TBD
 
 TBD
 
+=head1 LINKS
+
+L<http://www.slideshare.net/miyagawa/webscraper>
+
+L<http://www.slideshare.net/miyagawa/web-scraper-shibuyapm-tech-talk-8> - fresh version of previous presentation
+
+L<http://use.perl.org/article.pl?sid=07/10/04/2021216> - "filters"
+
 =head1 AUTHOR
 
 Tatsuhiko Miyagawa E<lt>miyagawa@bulknews.netE<gt>
