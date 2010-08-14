@@ -23,6 +23,7 @@ sub import {
     *{"$pkg\::process"}       = sub { goto &process };
     *{"$pkg\::process_first"} = sub { goto &process_first };
     *{"$pkg\::result"}        = sub { goto &result  };
+    *{"$pkg\::split_by"}      = sub { goto &split_by  };
 }
 
 our $UserAgent;
@@ -92,6 +93,8 @@ sub scrape {
     local *process       = create_process(0, $tree, $stash, $current);
     local *process_first = create_process(1, $tree, $stash, $current);
 
+    local *split_by = create_splitter($tree, $stash, $current);
+
     my $retval;
     local *result = sub {
         $retval++;
@@ -124,6 +127,76 @@ sub build_tree {
     $t->parse($html);
     $t->eof;
     $t;
+}
+
+sub create_splitter {
+    my($tree, $stash, $uri) = @_;
+
+    sub {
+        my($exp, @attr) = @_;
+        my $xpath = $exp =~ m!^(?:/|id\()! ? $exp : HTML::Selector::XPath::selector_to_xpath($exp);
+        $xpath=~s!^/+!!;
+        $xpath="/$xpath";
+        my @elements=$tree->content_list();
+        $tree->detach_content(); # we are operating on a copy
+        my @r;
+        my @current;
+        #print "working on ",$tree->starttag,", xpath=$xpath\n";
+        while (@elements) {
+            my $el = shift @elements;
+            #print " scanning on ",$el->starttag,"\n";
+            my @nodes = eval {
+                local $SIG{__WARN__} = sub { };
+                $el->findnodes($xpath);
+            };
+            if (@nodes) {
+                #print " - xpath ok\n";
+                if (@current) {
+                    push @r,[@current];
+                    @current=();
+                }
+            }
+            push @current,$el;
+        }
+        if (@current) {
+            push @r,[@current];
+            @current=();
+        }
+        my @nodes;
+        foreach my $st (@r) {
+            my $e1=$tree->clone;
+            $e1->push_content(@$st);
+            push @nodes,$e1;
+            #print "tag created\n";
+        }
+
+        # my $val=$attr[0];
+        # for my $node (@nodes) {
+            # $node->dump();
+            # if (blessed($val) && $val->isa('Web::Scraper')) {
+                # $val->scrape($node, $uri);
+                # print "scrape\n";
+            # }
+        # }
+        while (my($key, $val) = splice(@attr, 0, 2)) {
+            if (!defined $val) {
+                if (ref($key) && ref($key) eq 'CODE') {
+                    for my $node (@nodes) {
+                        local $_ = $node;
+                        $key->($node);
+                    }
+                } else {
+                    die "Don't know what to do with $key => undef";
+                }
+            } elsif ($key =~ s!\[\]$!!) {
+                $stash->{$key} = [ map __get_value($_, $val, $uri), @nodes ];
+            } else {
+                $stash->{$key} = __get_value($nodes[0], $val, $uri);
+            }
+        }
+# 
+        return;
+    };
 }
 
 sub create_process {
@@ -272,6 +345,7 @@ sub __stub {
 *process       = __stub 'process';
 *process_first = __stub 'process_first';
 *result        = __stub 'result';
+*split_by      = __stub 'split_by';
 
 1;
 __END__

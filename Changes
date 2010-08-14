@@ -1,5 +1,7 @@
 Revision history for Perl extension Web::Scraper
 
+        - 'split_by' added (Alexandr Ciornii)
+
 0.31  Sun Jul 19 00:43:54 PDT 2009
         - Use new LWP's content_charset method instead of HTTP::Response::Encoding
           (Thanks to hanekomu)
