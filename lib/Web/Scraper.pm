@@ -129,6 +129,7 @@ sub build_tree {
     $t;
 }
 
+#splits list by some tag, in case similar to <a><b><a><b> -> (<a><b>,<a><b>)
 sub create_splitter {
     my($tree, $stash, $uri) = @_;
 
