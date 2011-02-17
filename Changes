@@ -1,5 +1,8 @@
 Revision history for Perl extension Web::Scraper
 
+0.33  Thu Feb 17 09:12:55 PST 2011
+        - Remove failing invalid XPath tests        
+
 0.32  Wed Feb  3 22:13:01 PST 2010
         - Removes poking around charset and LWP's decoded_content
           (Thanks to flatwhatson)

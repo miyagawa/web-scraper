@@ -14,11 +14,10 @@ requires 'UNIVERSAL::require';
 requires 'URI';
 requires 'YAML';
 
-include 'Module::AutoInstall';
 feature 'LibXML', -default => 1, 'HTML::TreeBuilder::LibXML', 0.04;
-auto_install;
 
 build_requires 'Test::More';
+build_requires 'Test::Base';
 install_script 'bin/scraper';
 
 unlink glob "t/libxml-*.t";
@@ -26,7 +25,6 @@ if (eval q{ use HTML::TreeBuilder::LibXML 0.04; 1 }) {
     setup_libxml_tests();
 }
 
-use_test_base;
 auto_set_repository;
 author_tests "xt";
 WriteAll;
