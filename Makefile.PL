@@ -18,6 +18,7 @@ feature 'LibXML', -default => 1, 'HTML::TreeBuilder::LibXML', 0.04;
 
 build_requires 'Test::More';
 build_requires 'Test::Base';
+test_requires 'Test::Requires';
 install_script 'bin/scraper';
 
 unlink glob "t/libxml-*.t";

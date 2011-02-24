@@ -1,4 +1,5 @@
 use strict;
+use Test::Requires qw(HTML::TreeBuilder::LibXML);
 use Test::Base;
 use Web::Scraper::LibXML;
 
