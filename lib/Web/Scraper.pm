@@ -149,6 +149,8 @@ sub create_process {
                 }
             } elsif ($key =~ s!\[\]$!!) {
                 $stash->{$key} = [ map __get_value($_, $val, $uri), @nodes ];
+            } elsif ($key =~ s!\{\}$!!) {
+                $stash->{$key} = { map __get_value($_, $val, $uri), @nodes };
             } else {
                 $stash->{$key} = __get_value($nodes[0], $val, $uri);
             }
