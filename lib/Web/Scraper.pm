@@ -113,6 +113,7 @@ sub build_tree {
     my($self, $html) = @_;
 
     my $t = HTML::TreeBuilder::XPath->new;
+    $t->store_comments(1) if ($t->can('store_comments'));
     $t->parse($html);
     $t->eof;
     $t;
@@ -174,7 +175,16 @@ sub __get_value {
         }
         return $value;
     } elsif (lc($val) eq 'content' || lc($val) eq 'text') {
-        return $node->isTextNode ? $node->string_value : $node->as_text;
+        # getValue method is used for getting a content of comment nodes
+        # from HTML::TreeBuilder::XPath (version >= 0.14)
+        # or HTML::TreeBuilder::LibXML (version >= 0.13)
+        # getValue method works like as_text in both modules
+        # for other node types
+        return $node->isTextNode
+            ? $node->string_value
+            : ($node->can('getValue')
+                ? $node->getValue
+                : $node->as_text);
     } elsif (lc($val) eq 'raw' || lc($val) eq 'html') {
         if ($node->isTextNode) {
             if ($HTML::TreeBuilder::XPath::VERSION < 0.09) {
@@ -354,6 +364,7 @@ This way Web::Scraper can resolve the relative links found in the document.
   scraper {
       process "tag.class", key => 'TEXT';
       process '//tag[contains(@foo, "bar")]', key2 => '@attr';
+      process '//comment()', 'comments[]' => 'TEXT';
   };
 
 I<process> is the method to find matching elements from HTML with CSS
@@ -370,6 +381,14 @@ XPath expression and otherwise CSS selector.
   # <div class="body"><a href="http://example.com/">foo</a></div>
   # link => URI->new("http://example.com/")
   process ".body > a", link => '@href';
+
+  # <div class="body"><!-- HTML Comment here --><a href="http://example.com/">foo</a></div>
+  # comment => " HTML Comment here "
+  #
+  # NOTES: A comment nodes are accessed when installed
+  # the HTML::TreeBuilder::XPath (version >= 0.14) and/or
+  # the HTML::TreeBuilder::LibXML (version >= 0.13)
+  process "//div[contains(@class, 'body')]/comment()", comment => 'TEXT';
 
   # <div class="body"><a href="http://example.com/">foo</a></div>
   # link => URI->new("http://example.com/"), text => "foo"
