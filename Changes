@@ -1,5 +1,8 @@
 Revision history for Perl extension Web::Scraper
 
+0.35  Mon Sep 26 18:40:06 PDT 2011
+        - Added support for comments() XPath #3 (Perlover)
+
 0.34  Thu Feb 24 09:35:12 PST 2011
         - Skip xml_simple.t if LibXML is not there (omega)
 

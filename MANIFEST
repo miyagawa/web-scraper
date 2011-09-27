@@ -45,6 +45,7 @@ t/16_filter.t
 t/17_filter_loop.t
 t/18_http_response.t
 t/19_decode_content.t
+t/20_comment_nodes.t
 t/redefine.t
 t/xml-simple.t
 xt/97_podspell.t
