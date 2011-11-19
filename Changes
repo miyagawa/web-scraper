@@ -1,5 +1,8 @@
 Revision history for Perl extension Web::Scraper
 
+0.36  Sat Nov 19 12:12:54 PST 2011
+        - Support HTML5 tags by not ignoring unknonw tags (leedo)
+
 0.35  Mon Sep 26 18:40:06 PDT 2011
         - Added support for comments() XPath #3 (Perlover)
 
