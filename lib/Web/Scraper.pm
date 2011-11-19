@@ -114,6 +114,7 @@ sub build_tree {
 
     my $t = HTML::TreeBuilder::XPath->new;
     $t->store_comments(1) if ($t->can('store_comments'));
+    $t->ignore_unknown(0);
     $t->parse($html);
     $t->eof;
     $t;
