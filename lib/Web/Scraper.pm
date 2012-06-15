@@ -61,7 +61,7 @@ sub scrape {
     if (blessed($stuff) && $stuff->isa('URI')) {
         my $ua  = $self->user_agent;
         my $res = $ua->get($stuff);
-        return $self->scrape($res, $stuff->as_string);
+        return $self->scrape($res, $current // $stuff->as_string);
     } elsif (blessed($stuff) && $stuff->isa('HTTP::Response')) {
         if ($stuff->is_success) {
             $html = $stuff->decoded_content;
