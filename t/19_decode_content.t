@@ -25,7 +25,7 @@ $ua->default_header('Accept-Encoding' => 'gzip');
     my $result = scraper {
         process 'img.csschanger', image => '@src';
     }->scrape($res);
-    is $result->{image}, 'http://b.hatena.ne.jp/images/logo1.gif', 'Absolute URI';
+    is $result->{image}, 'http://b.hatena.ne.jp/images/title_hotentry_curvebox-header.gif', 'Absolute URI';
 }
 
 
