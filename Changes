@@ -1,5 +1,8 @@
 Revision history for Perl extension Web::Scraper
 
+0.37  Fri Oct 19 15:09:17 PDT 2012
+        - Repack with the latest Module::Install
+
 0.36  Sat Nov 19 12:12:54 PST 2011
         - Support HTML5 tags by not ignoring unknonw tags (leedo)
 
