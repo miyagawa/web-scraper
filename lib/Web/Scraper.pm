@@ -227,6 +227,18 @@ sub run_filter {
     if (ref($filter) eq 'CODE') {
         $callback = $filter;
         $module   = "$filter";
+    } elsif (ref($filter) eq 'Regexp') {
+        $callback = sub {
+            my @unnamed = shift =~ /$filter/x;
+            if (%+) {
+                return { %+ };
+            } elsif (@unnamed) {
+                return shift @unnamed;
+            } else {
+                return;
+            }
+        };
+        $module   = "$filter";
     } elsif (!ref($filter)) {
         $module = $filter =~ s/^\+// ? $filter : "Web::Scraper::Filter::$filter";
         unless ($module->isa('Web::Scraper::Filter')) {
