@@ -11,6 +11,8 @@ filters {
 
 run {
     my $block = shift;
+    return pass("no named grouping in Perl $]")
+        if $] < 5.010 and $block->name eq 'named';
     my $s = scraper {
         process 'a', 'want[]' => $block->want;
         result 'want';
