@@ -43,3 +43,10 @@ __DATA__
 --- expected
 -
 - 1
+
+=== stack
+--- want
+[ TEXT => qr/(\w+)/ => sub { ucfirst } ]
+--- expected
+- Foo
+- Bar

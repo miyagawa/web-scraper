@@ -52,10 +52,13 @@ If you declare your filter under your own namespace, like
 
   process $exp, $key => [ 'TEXT', '+MyApp::Filter::Foo' ];
 
-You can also inline your filter function without creating a filter
-class:
+You can also inline your filter function or regexp without creating a
+filter class:
 
   process $exp, $key => [ 'TEXT', sub { s/foo/bar/ } ];
+
+  process $exp, $key => [ 'TEXT', qr/Price: (\d+)/ ];
+  process $exp, $key => [ 'TEXT', qr/(?<name>\w+): (?<value>\w+)/ ];
 
 Note that this function munges C<$_> and returns the count of
 replacement. Filter code special cases if the return value of the
