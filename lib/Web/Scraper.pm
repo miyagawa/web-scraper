@@ -322,7 +322,7 @@ The structure would resemble this (visually)
 
 Web::Scraper is a web scraper toolkit, inspired by Ruby's equivalent
 Scrapi. It provides a DSL-ish interface for traversing HTML documents and
-returning a neatly arranged Perl data strcuture.
+returning a neatly arranged Perl data structure.
 
 The I<scraper> and I<process> blocks provide a method to define what segments
 of a document to extract.  It understands HTML and CSS Selectors as well as
