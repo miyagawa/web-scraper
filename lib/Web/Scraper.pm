@@ -292,29 +292,35 @@ Web::Scraper - Web Scraping Toolkit using HTML and CSS Selectors or XPath expres
 
   # First, create your scraper block
   my $tweets = scraper {
-      # Parse all LIs with the class "status", store them into a resulting
-      # array 'tweets'.  We embed another scraper for each tweet.
-      process "li.status", "tweets[]" => scraper {
-          # And, in that array, pull in the elementy with the class
-          # "entry-content", "entry-date" and the link
-          process ".entry-content", body => 'TEXT';
-          process ".entry-date", when => 'TEXT';
-          process 'a[rel="bookmark"]', link => '@href';
+      # Parse all LIs inside "div.toc ol", store them into a resulting
+      # array 'list'.  We embed other scrapers for each LI.
+      process "div.toc ol li", "list[]" => scraper {
+          # And, in each LI,
+          # get the text of A elements
+          process 'a[rel="chapter"]', a_text => 'TEXT';
+          # get the link in A elements
+          process 'a[rel="chapter"]', link => '@href';
+          # get text inside EM elements
+          process "em", emphasis => 'TEXT';
       };
   };
 
-  my $res = $tweets->scrape( URI->new("http://twitter.com/miyagawa") );
+  my $res = $tweets->scrape( URI->new("http://www.w3.org/TR/html401/") );
 
-  # The result has the populated tweets array
-  for my $tweet (@{$res->{tweets}}) {
-      print "$tweet->{body} $tweet->{when} (link: $tweet->{link})\n";
+  # iterate the array 'list'
+  for my $li (@{$res->{list}}) {
+      # output is like:
+      # "HTML Document Representation
+      #  [http://www.w3.org/TR/html401/charset.html]
+      #  - Character sets, character encodings, and entities\n"
+      print "$li->{a_text} [$li->{link}] $li->{emphasis}\n";
   }
 
 The structure would resemble this (visually)
   {
-    tweets => [
-      { body => $body, when => $date, link => $uri },
-      { body => $body, when => $date, link => $uri },
+    list => [
+      { a_text => $text_of_A_element, link => $href_of_A_element, emphasis => $text_of_EM_element},
+      { a_text => $text_of_A_element, link => $href_of_A_element, emphasis => $text_of_EM_element},
     ]
   }
 
