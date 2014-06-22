@@ -289,32 +289,38 @@ Web::Scraper - Web Scraping Toolkit using HTML and CSS Selectors or XPath expres
 
   use URI;
   use Web::Scraper;
+  use Encode;
 
   # First, create your scraper block
-  my $tweets = scraper {
-      # Parse all LIs with the class "status", store them into a resulting
-      # array 'tweets'.  We embed another scraper for each tweet.
-      process "li.status", "tweets[]" => scraper {
-          # And, in that array, pull in the elementy with the class
-          # "entry-content", "entry-date" and the link
-          process ".entry-content", body => 'TEXT';
-          process ".entry-date", when => 'TEXT';
-          process 'a[rel="bookmark"]', link => '@href';
+  my $authors = scraper {
+      # Parse all TDs inside 'table[width="100%]"', store them into
+      # an array 'authors'.  We embed other scrapers for each TD.
+      process 'table[width="100%"] td', "authors[]" => scraper {
+  	# And, in each TD,
+  	# get the URI of "a" element
+  	process "a", uri => '@href';
+  	# get text inside "small" element
+  	process "small", fullname => 'TEXT';
       };
   };
 
-  my $res = $tweets->scrape( URI->new("http://twitter.com/miyagawa") );
+  my $res = $authors->scrape( URI->new("http://search.cpan.org/author/?A") );
 
-  # The result has the populated tweets array
-  for my $tweet (@{$res->{tweets}}) {
-      print "$tweet->{body} $tweet->{when} (link: $tweet->{link})\n";
+  # iterate the array 'authors'
+  for my $author (@{$res->{authors}}) {
+      # output is like:
+      # Andy Adler	http://search.cpan.org/~aadler/
+      # Aaron K Dancygier	http://search.cpan.org/~aakd/
+      # Aamer Akhter	http://search.cpan.org/~aakhter/
+      print Encode::encode("utf8", "$author->{fullname}\t$author->{uri}\n");
   }
+
 
 The structure would resemble this (visually)
   {
-    tweets => [
-      { body => $body, when => $date, link => $uri },
-      { body => $body, when => $date, link => $uri },
+    authors => [
+      { fullname => $fullname, link => $uri },
+      { fullname => $fullname, link => $uri },
     ]
   }
 
