@@ -8,7 +8,7 @@ use Test::More;
 plan skip_all => "LIVE_TEST not enabled"
     unless $ENV{LIVE_TEST} || $ENV{TEST_ALL};
 
-plan tests => 2;
+plan tests => 1;
 
 my $ua = LWP::UserAgent->new;
 $ua->default_header('Accept-Encoding' => 'gzip');
@@ -19,14 +19,5 @@ $ua->default_header('Accept-Encoding' => 'gzip');
     }->scrape($res);
     is $result->{title}, 'Yahoo! JAPAN';
 }
-
-{
-    my $res = $ua->get("http://b.hatena.ne.jp/");
-    my $result = scraper {
-        process 'img.csschanger', image => '@src';
-    }->scrape($res);
-    is $result->{image}, 'http://b.hatena.ne.jp/images/logo1.gif', 'Absolute URI';
-}
-
 
 
