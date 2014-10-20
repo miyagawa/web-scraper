@@ -72,7 +72,7 @@
          "web" : "https://github.com/miyagawa/web-scraper"
       }
    },
-   "version" : "0.37",
+   "version" : "0.38",
    "x_contributors" : [
       "Alexandr Ciornii <alexchorny@gmail.com>",
       "Andrew Whatson <andreww@kamaitachi.localdomain>",

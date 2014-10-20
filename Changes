@@ -1,5 +1,12 @@
 Revision history for Perl extension Web::Scraper
 
+{{$NEXT}}
+
+0.38  2014-10-19 17:25:53 PDT
+        - Improved documentation #8 (vti)
+        - Add regexp filter #10 (creaktive)
+        - Fix documentation error #16
+
 0.37  Fri Oct 19 15:09:17 PDT 2012
         - Repack with the latest Module::Install
 
