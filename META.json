@@ -1,0 +1,90 @@
+{
+   "abstract" : "Web Scraping Toolkit using HTML and CSS Selectors or XPath expressions",
+   "author" : [
+      "Tatsuhiko Miyagawa <miyagawa@bulknews.net>"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "Dist::Milla version v1.0.8, Dist::Zilla version 5.020, CPAN::Meta::Converter version 2.142690",
+   "license" : [
+      "perl_5"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "Web-Scraper",
+   "no_index" : {
+      "directory" : [
+         "t",
+         "xt",
+         "inc",
+         "share",
+         "eg",
+         "examples"
+      ]
+   },
+   "prereqs" : {
+      "build" : {
+         "requires" : {
+            "ExtUtils::MakeMaker" : "6.59",
+            "Test::Base" : "0",
+            "Test::More" : "0",
+            "Test::Requires" : "0"
+         }
+      },
+      "configure" : {
+         "requires" : {
+            "Module::Build::Tiny" : "0.039"
+         }
+      },
+      "develop" : {
+         "requires" : {
+            "Dist::Milla" : "v1.0.8",
+            "Test::Pod" : "1.41"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "HTML::Entities" : "0",
+            "HTML::Selector::XPath" : "0.03",
+            "HTML::Tagset" : "0",
+            "HTML::TreeBuilder" : "3.23",
+            "HTML::TreeBuilder::XPath" : "0.08",
+            "LWP" : "5.827",
+            "Scalar::Util" : "0",
+            "UNIVERSAL::require" : "0",
+            "URI" : "0",
+            "XML::XPathEngine" : "0.08",
+            "YAML" : "0",
+            "perl" : "5.008001"
+         }
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/miyagawa/web-scraper/issues"
+      },
+      "homepage" : "https://github.com/miyagawa/web-scraper",
+      "repository" : {
+         "type" : "git",
+         "url" : "https://github.com/miyagawa/web-scraper.git",
+         "web" : "https://github.com/miyagawa/web-scraper"
+      }
+   },
+   "version" : "0.37",
+   "x_contributors" : [
+      "Alexandr Ciornii <alexchorny@gmail.com>",
+      "Andrew Whatson <andreww@kamaitachi.localdomain>",
+      "DQNEO <dqneoo@gmail.com>",
+      "David Steinbrunner <dsteinbrunner@pobox.com>",
+      "Jay Shirley <j@shirley.im>",
+      "Lee Aylward <lee@laylward.com>",
+      "Perlover <perlover@perlover.com>",
+      "Stanislaw Pusep <creaktive@gmail.com>",
+      "Tatsuhiko Miyagawa <miyagawa@gmail.com>",
+      "Tatsuhiko Miyagawa <tatsuhiko@BlackBook-2.local>",
+      "vti <viacheslav.t@gmail.com>"
+   ]
+}
+
