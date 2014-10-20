@@ -409,19 +409,67 @@ XPath expression and otherwise CSS selector.
   # list => [ { id => "1", text => "foo" }, { id => "2", text => "bar" } ];
   process "li", "list[]" => { id => '@id', text => "TEXT" };
 
+=head2 process_first
+
+C<process_first> is the same as C<process> but stops when the first matching
+result is found.
+
+  # <span class="date">2008/12/21</span>
+  # <span class="date">2008/12/22</span>
+  # date => "2008/12/21"
+  process_first ".date", date => 'TEXT';
+
+=head2 result
+
+C<result> allows to return not the default value after processing but a single
+value specified by a key or a hash reference built from several keys.
+
+  process 'a', 'want[]' => 'TEXT';
+  result 'want';
+
 =head1 EXAMPLES
 
 There are many examples in the C<eg/> dir packaged in this distribution.
 It is recommended to look through these.
 
-
 =head1 NESTED SCRAPERS
 
-TBD
+Scrapers can be nested thus allowing to scrape already captured data.
+
+  # <ul>
+  # <li class="foo"><a href="foo1">bar1</a></li>
+  # <li class="bar"><a href="foo2">bar2</a></li>
+  # <li class="foo"><a href="foo3">bar3</a></li>
+  # </ul>
+  # friends => [ {href => 'foo1'}, {href => 'foo2'} ];
+  process 'li', 'friends[]' => scraper {
+    process 'a', href => '@href',
+  };
 
 =head1 FILTERS
 
-TBD
+Filters are applied to the result after processing. They can be declared as
+anonymous subroutines or as class names.
+
+  process $exp, $key => [ 'TEXT', sub { s/foo/bar/ } ];
+  process $exp, $key => [ 'TEXT', 'Something' ];
+  process $exp, $key => [ 'TEXT', '+MyApp::Filter::Foo' ];
+
+Filters can be stacked
+
+  process $exp, $key => [ '@href', 'Foo', '+MyApp::Filter::Bar', \&baz ];
+
+More about filters you can find in L<Web::Scraper::Filter> documentation.
+
+=head1 XML backends
+
+By default L<HTML::TreeBuilder::XPath> is used, this can be replaces by
+a L<XML::LibXML> backend using L<Web::Scraper::LibXML> module.
+
+  use Web::Scraper::LibXML;
+
+  # same as Web::Scraper
+  my $scraper = scraper { ... };
 
 =head1 AUTHOR
 
