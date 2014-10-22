@@ -433,7 +433,7 @@ result is found.
 
 =head2 result
 
-C<result> allows to return not the default value after processing but a single
+C<result> allows one to return not the default value after processing but a single
 value specified by a key or a hash reference built from several keys.
 
   process 'a', 'want[]' => 'TEXT';
