@@ -329,6 +329,7 @@ Web::Scraper - Web Scraping Toolkit using HTML and CSS Selectors or XPath expres
 
 
 The structure would resemble this (visually)
+
   {
     authors => [
       { fullname => $fullname, link => $uri },
