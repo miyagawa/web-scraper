@@ -68,7 +68,7 @@ sub scrape {
         } else {
             croak "GET " . $stuff->request->uri . " failed: ", $stuff->status_line;
         }
-        $current ||= $stuff->request->uri;
+        $current = $stuff->request->uri;
     } elsif (blessed($stuff) && $stuff->isa('HTML::Element')) {
         $tree = $stuff->clone;
     } elsif (ref($stuff) && ref($stuff) eq 'SCALAR') {
